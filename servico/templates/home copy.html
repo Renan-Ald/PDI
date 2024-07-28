@@ -1,0 +1,41 @@
+<!-- Em servicos/templates/home.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Bem-vindo à Página Inicial (Home)</h1>
+    
+    {% if user.is_authenticated %}
+        <p><a href="{% url 'logout' %}">Logout</a></p>
+    {% else %}
+        <p><a href="{% url 'login' %}">Login</a> | <a href="{% url 'register' %}">Registrar</a></p>
+    {% endif %}
+    
+    {% for servico in servicos %}
+    <div>
+        <h2>{{ servico.nome }}</h2>
+        <p><img src="{{ servico.foto.url }}" alt="{{ servico.nome }}"></p>
+        <p>Valor: R$ {{ servico.valor }}</p>
+        <p>{{ servico.descricao }}</p>
+        <a href="{% url 'detalhes_servico' servico.pk %}">Detalhes</a>  <!-- Corrigido para usar 'detalhes_servico' -->
+        {% if user.is_authenticated %}
+            {% if servico.link_compra %}
+                <a href="{{ servico.link_compra }}">Comprar</a>
+            {% else %}
+                <form action="{% url 'comprar_servico' servico.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Comprar</button>
+                </form>
+            {% endif %}
+        {% else %}
+            <p>Faça login para comprar este serviço.</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+</body>
+</html>

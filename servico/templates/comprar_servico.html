@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Comprar Serviço{% endblock %}
+
+{% block content %}
+    <h1>Comprar {{ servico.nome }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% for form in resposta_forms %}
+            <div>
+                <label for="{{ form.prefix }}">{{ form.instance.pergunta.texto }}</label>
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+        <button type="submit">Finalizar Compra</button>
+    </form>
+{% endblock %}

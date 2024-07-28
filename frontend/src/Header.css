@@ -1,0 +1,15 @@
+/* Header.css */
+.navbar-nav .nav-link:hover,
+.navbar-nav .dropdown-item:hover {
+  background-color: transparent; /* Cor de fundo transparente */
+  color: inherit; /* Mantém a cor do texto original */
+}
+
+.navbar-nav .dropdown-menu {
+  background-color: #f8f9fa; /* Cor de fundo do dropdown */
+}
+
+/* Garantir que o dropdown funcione corretamente */
+.nav-item .dropdown-toggle::after {
+  display: none; /* Remove o ícone de seta padrão */
+}

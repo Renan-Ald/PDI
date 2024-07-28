@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes do Serviço{% endblock %}
+
+{% block content %}
+    <h1>{{ servico.nome }}</h1>
+    <p>{{ servico.descricao }}</p>
+    <a href="{% url 'comprar_servico' servico.pk %}">Comprar</a>
+{% endblock %}

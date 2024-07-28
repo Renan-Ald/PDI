@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Meu Site{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    {% block extra_css %}
+    <!-- Extra CSS can be added here -->
+    {% endblock %}
+</head>
+<body>
+    <!-- HEADER -->
+    <header role="banner" class="position-absolute">
+        <nav role="navigation" class="nav">
+            <ul class="nav-items">
+                <li class="nav-item">
+                    <a href="{% url 'home' %}" class="nav-link"><span>Home</span></a>
+                </li> 
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link"><span>Products</span></a>
+                    <nav class="submenu">
+                        <ul class="submenu-items">
+                            <li class="submenu-item"><a href="#" class="submenu-link">Product #1</a></li>
+                            <li class="submenu-item"><a href="#" class="submenu-link">Product #2</a></li>
+                            <li class="submenu-item"><a href="#" class="submenu-link">Product #3</a></li>
+                        </ul>
+                    </nav>
+                </li> 
+                <li class="nav-item">
+                    <a href="#" class="nav-link"><span>Services</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link"><span>Pricing</span></a>
+                </li> 
+                <li class="nav-item">
+                    <a href="#" class="nav-link"><span>News</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link"><span>More</span></a>
+                    <nav class="submenu">
+                        <ul class="submenu-items">
+                            <li class="submenu-item"><a href="#" class="submenu-link">About</a></li>
+                            <li class="submenu-item"><a href="#" class="submenu-link">Contact</a></li>
+                            <li class="submenu-item"><hr class="submenu-seperator" /></li>
+                            <li class="submenu-item"><a href="#" class="submenu-link">Support</a></li>
+                            <li class="submenu-item"><a href="#" class="submenu-link">FAQs</a></li>
+                            <li class="submenu-item"><a href="#" class="submenu-link">Careers</a></li>
+                        </ul>
+                    </nav>
+                </li>  
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link"><span>User</span></a>
+                    <nav class="submenu">
+                        <ul class="submenu-items">
+                            {% if user.is_authenticated %}
+                                <li class="submenu-item"><a href="{% url 'profile' %}" class="submenu-link">Perfil</a></li>
+                                <li class="submenu-item"><a href="{% url 'logout' %}" class="submenu-link">Logout</a></li>
+                            {% else %}
+                                <li class="submenu-item"><a href="{% url 'login' %}" class="submenu-link">Login</a></li>
+                                <li class="submenu-item"><a href="{% url 'register' %}" class="submenu-link">Register</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- CONTENT -->
+    {% block content %}
+    <!-- Page-specific content goes here -->
+    {% endblock %}
+   
+    <!-- JavaScript -->
+    <script>
+        document.querySelectorAll('.dropdown .nav-link').forEach(function(el){
+            el.addEventListener('click', function(e){
+                if (this.nextElementSibling && this.nextElementSibling.classList.contains('submenu')) {
+                    e.preventDefault();
+                    var elParent = this.parentNode;
+                    elParent.classList.contains('show-submenu') ? hideSubMenu(elParent) : showSubMenu(elParent);
+                }
+            }, false);
+        });
+
+        function showSubMenu(el){
+            el.classList.add('show-submenu');
+            document.addEventListener('click', function onDocClick(e){
+                if (!el.contains(e.target)) {
+                    document.removeEventListener('click', onDocClick);
+                    hideSubMenu(el);
+                }
+            });
+        }
+
+        function hideSubMenu(el){
+            el.classList.remove('show-submenu');
+        }
+    </script>
+</body>
+</html>

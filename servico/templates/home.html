@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <h1>Welcome to the Home Page</h1>
+    <!-- Adicione aqui o conteúdo específico da página inicial -->
+    <ul>
+        {% for servico in servicos %}
+            <li>
+                <a href="{% url 'detalhes_servico' servico.pk %}">{{ servico.nome }}</a>
+                <a href="{% url 'comprar_servico' servico.pk %}">Comprar</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
