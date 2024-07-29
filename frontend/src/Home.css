@@ -1,4 +1,16 @@
 /* src/Home.css */
+.btn-light-blue {
+  background-color: #add8e6; /* Azul claro */
+  border-color: #add8e6;
+  color: #fff; /* Texto branco */
+}
+
+.btn-light-blue:hover {
+  background-color: #87ceeb; /* Azul claro mais escuro ao passar o mouse */
+  border-color: #87ceeb;
+  color: #fff;
+}
+
 .home-container {
     font-family: Arial, sans-serif;
     padding: 20px;

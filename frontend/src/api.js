@@ -232,7 +232,7 @@ export const updateAvaliacao = async (avaliacaoId, avaliacaoData) => {
 export const getAvaliacao = async (pagamentoId) => {
   try {
     const response = await privateApi.get(`avaliacoes/?pagamento_id=${pagamentoId}`);
-    return response.data[0] || null; // Supondo que a resposta seja uma lista de avaliações
+    return response.data[0] || null; // a resposta seja uma lista de avaliações
   } catch (error) {
     console.error('Erro ao buscar avaliação existente:', error);
     throw error;

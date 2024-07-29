@@ -11,6 +11,7 @@ import Profile from './Profile';
 import Avaliacao from './Avaliacao';
 import LoginProfissional from './LoginProfissional';
 import AvaliadorArea from './AvaliadorArea'; 
+import Footer from './Footer';
 function App() {
   const isProfissionalAuthenticated = () => {
     return !!localStorage.getItem('profissionalToken');
@@ -31,7 +32,9 @@ function App() {
           <Route path="/avaliador">
             {isProfissionalAuthenticated() ? <AvaliadorArea /> : <Redirect to="/avaliador/login" />}
           </Route>
+          
         </Switch>
+        <Footer />
       </Router>
     </AuthProvider>
   );
