@@ -185,9 +185,10 @@ export const loginUser = async (email, password) => {
   }
 };
 
-export const loginProfissional = async (email, senha) => { // Note que usamos "senha" aqui
+export const loginProfissional = async (email, senha) => { 
   try {
     const response = await axios.post('http://localhost:8000/api/avaliador/login/', { email, senha });
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;

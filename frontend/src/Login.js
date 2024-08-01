@@ -49,6 +49,7 @@ const Login = () => {
               {error && <p className="error-message">{error}</p>}
 
               <div className="form-group mb-4">
+              <label className="form-label" htmlFor="form3Example3">Email address</label>
                 <input
                   type="email"
                   id="form3Example3"
@@ -58,10 +59,11 @@ const Login = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
-                <label className="form-label" htmlFor="form3Example3">Email address</label>
+                
               </div>
 
               <div className="form-group mb-3">
+              <label className="form-label" htmlFor="form3Example4">Password</label>
                 <input
                   type="password"
                   id="form3Example4"
@@ -71,7 +73,7 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <label className="form-label" htmlFor="form3Example4">Password</label>
+                
               </div>
 
               <div className="d-flex justify-content-between align-items-center">

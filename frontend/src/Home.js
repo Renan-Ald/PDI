@@ -2,6 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { fetchServices, addToCart } from './api';
 import heroImg from './img/hero-img.png';
+import tick from './img/tick.png';
+import validation from './img/validation.png';
+import marketer from './img/marketer.png';
+import manager from './img/manager.png';
 import './Home.css';
 const Home = () => {
   const [services, setServices] = useState([]);
@@ -58,26 +62,108 @@ const Home = () => {
     </div>
   </div>
 </section>
-      <div className="container mt-5">
-        <h1 className="text-center mb-4">Serviços Disponíveis</h1>
-        <div className="row">
-          {services.map((service) => (
-            <div className="col-md-4 mb-4" key={service.id}>
-              <div className="card h-100">
-                <div className="card-body">
-                  <h5 className="card-title">{service.nome}</h5>
-                  <p className="card-text">{service.descricao}</p>
-                  <p className="card-text"><strong>Preço: R${service.valor}</strong></p>
-                  <button className="btn btn-primary" onClick={() => handleAddToCart(service.id)}>
-                    Adicionar ao Carrinho
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
+<section class="section-products">
+  <div class="container">
+    <div class="row justify-content-center text-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="header">
+        <h1 className="mb-4 fs-9 fw-bold">Product</h1>
         </div>
       </div>
     </div>
+    <div class="row">
+      
+      {services.map((service) => (
+        <div class="col-md-6 col-lg-4 col-xl-3" key={service.id}>
+          <div id={`product-${service.id}`} class="single-product">
+            <div class="part-1">
+              <span class="new">new</span>
+              <ul>
+                <li><a onClick={() => handleAddToCart(service.id)}><i class="bi bi-cart-fill"></i></a></li>
+                <li><a href="#"><i class="bi bi-heart-fill"></i></a></li>
+              </ul>
+            </div>
+            <div class="part-2">
+              <h3 class="product-title">{service.nome}</h3>
+              <h4 class="product-price">R${service.valor}</h4>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+      <section class="pt-5" id="validation">
+
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6">
+              <h5 class="text-secondary">Lorem ipsum, dolor sit amet consectetur adipisicing elit</h5>
+              <h2 class="mb-2 fs-7 fw-bold">Design Professionals</h2>
+              <p class="mb-4 fw-medium text-secondary">
+                The Myspace page defines the individual,his or her
+                characteristics, traits, personal choices and the overall<br />personality of the person.
+              </p>
+              <h4 class="fs-1 fw-bold">Accessory makers</h4>
+              <p class="mb-4 fw-medium text-secondary">While most people enjoy casino gambling, sports betting,<br />lottery and bingo playing for the fun</p>
+              <h4 class="fs-1 fw-bold">Alterationists</h4>
+              <p class="mb-4 fw-medium text-secondary">If you are looking for a new way to promote your business<br />that won't cost you money,</p>
+              <h4 class="fs-1 fw-bold">Custom Design designers</h4>
+              <p class="mb-4 fw-medium text-secondary">If you are looking for a new way to promote your business<br />that won't cost you more money,</p>
+            </div>
+            <div class="col-lg-6"><img class="img-fluid" src={validation} alt="" /></div>
+          </div>
+        </div>
+      </section>
+      <section class="pt-5" id="manager">
+
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6"><img class="img-fluid" src={manager} alt="" /></div>
+            <div class="col-lg-6">
+              <h5 class="text-secondary">Easier decision making for</h5>
+              <p class="fs-7 fw-bold mb-2">Product Managers</p>
+              <p class="mb-4 fw-medium text-secondary">
+                The Myspace page defines the individual,his or her
+                characteristics, traits, personal choices and the overall<br />personality of the person.
+              </p>
+              <div class="d-flex align-items-center mb-3"> <img class="me-sm-4 me-2" src={tick} width="35" alt="tick" />
+                <p class="fw-medium mb-0 text-secondary">Never worry about overpaying for your<br />energy again.</p>
+              </div>
+              <div class="d-flex align-items-center mb-3"> <img class="me-sm-4 me-2" src={tick} width="35" alt="tick" />
+                <p class="fw-medium mb-0 text-secondary">We will only switch you to energy companies<br />that we trust and will treat you right</p>
+              </div>
+              <div class="d-flex align-items-center mb-3"><img class="me-sm-4 me-2" src={tick} width="35" alt="tick" />
+                <p class="fw-medium mb-0 text-secondary"> We track the markets daily and know where the<br />savings are.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+      <section class="pt-5" id="marketer">
+
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6">
+              <h5 class="text-secondary">Optimisation for</h5>
+              <p class="mb-2 fs-8 fw-bold">Marketers</p>
+              <p class="mb-4 fw-medium text-secondary">Few would argue that, despite the advancements of<br />feminism over the past three decades, women still face a<br />double standard when it comes to their behavior.</p>
+              <h4 class="fw-bold fs-1">Accessory makers</h4>
+              <p class="mb-4 fw-medium text-secondary">While most people enjoy casino gambling, sports betting,<br />lottery and bingo playing for the fun</p>
+              <h4 class="fw-bold fs-1">Alterationists</h4>
+              <p class="mb-4 fw-medium text-secondary">If you are looking for a new way to promote your business<br />that won't cost you money,</p>
+              <h4 class="fw-bold fs-1">Custom Design designers</h4>
+              <p class="mb-4 fw-medium text-secondary">If you are looking for a new way to promote your business<br />that won't cost you more money,</p>
+            </div>
+            <div class="col-lg-6"><img class="img-fluid"  src={marketer}  alt="" /></div>
+          </div>
+        </div>
+      </section>
+
+    
+    </div>
+    
   );
 };
 

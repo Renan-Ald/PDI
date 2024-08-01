@@ -1,27 +1,29 @@
-// src/LoginProfissional.js
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import AuthContext from './AuthContext';
-import api from './api';
-
+import { loginProfissional } from './api'; 
 const LoginProfissional = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [senha, setSenha] = useState('');
   const history = useHistory();
-  const { loginProfissional } = useContext(AuthContext);
+  const { loginProfissional: updateAuth } = useContext(AuthContext);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await api.post('/avaliador/login/', { email, password });
-      const { access, refresh } = response.data;
+      const data = await loginProfissional(email, senha);
+      const { access, refresh } = data;
 
       // Salva os tokens no localStorage
       localStorage.setItem('profissionalToken', access);
       localStorage.setItem('profissionalRefreshToken', refresh);
 
       // Atualiza o contexto de autenticação
-      loginProfissional(access);
+      if (updateAuth) {
+        updateAuth(data); 
+      } else {
+        console.error('updateAuth não está definido');
+      }
 
       // Redireciona para a área do avaliador
       history.push('/avaliador');
@@ -44,11 +46,11 @@ const LoginProfissional = () => {
           />
         </div>
         <div>
-          <label>Password:</label>
+          <label>Senha:</label>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
           />
         </div>
         <button type="submit">Login</button>
