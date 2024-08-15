@@ -86,6 +86,7 @@ class ItemCarrinhoSerializer(serializers.ModelSerializer):
 
 ##pagamento
 class PagamentoSerializer(serializers.ModelSerializer):
+    servico = ServicoSerializer()
     class Meta:
         model = Pagamento
         fields = ['id', 'servico', 'usuario', 'transacao', 'valor_original', 'valor_liquido', 'desconto', 'status', 'data_pagamento']
@@ -94,8 +95,8 @@ class PagamentoSerializer(serializers.ModelSerializer):
 ##avaliacao
 
 class AvaliacaoSerializer(serializers.ModelSerializer):
-    servico = serializers.PrimaryKeyRelatedField(queryset=Servico.objects.all())
-    pagamento = serializers.PrimaryKeyRelatedField(queryset=Pagamento.objects.all())  # Ajuste para 'pagamento'
+    servico = ServicoSerializer()  # Detalhes do serviço
+    pagamento = PagamentoSerializer()  # Detalhes do pagamento
 
     class Meta:
         model = Avaliacao
@@ -109,3 +110,5 @@ class AvaliacaoSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['usuario'] = self.context['request'].user
         return super().create(validated_data)
+
+
