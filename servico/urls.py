@@ -1,7 +1,7 @@
 from django.urls import path,include  
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter    
-from .views import register, login_view, ServicoListView, ServicoDetailView, PedidoViewSet, DetalhePedidoViewSet,PagamentoViewSet,finalizar_checkout,webhook_pagamento,ItemCarrinhoViewSet,user_profile,AvaliacaoViewSet,pagamentos_concluidos,AvaliacoesPendentesView
+from .views import register, login_view, ServicoListView, ServicoDetailView, PedidoViewSet, DetalhePedidoViewSet,PagamentoViewSet,finalizar_checkout,webhook_pagamento,ItemCarrinhoViewSet,user_profile,AvaliacaoViewSet,pagamentos_concluidos,AvaliacoesPendentesView,get_usuario
 from . import views
 
 
@@ -25,5 +25,5 @@ urlpatterns = [
     path('pagamentos-concluidos/', pagamentos_concluidos, name='pagamentos-concluidos'),
     path('avaliador/login/', views.profissional_login_view, name='profissional-login'),
     path('avaliacoes-pendentes/', AvaliacoesPendentesView.as_view(), name='avaliacoes-pendentes'),
-    #path('avaliador/', views.avaliador_area_view, name='avaliador-area'),
+    path('usuarios/<int:id>/', get_usuario, name='get_usuario'),
 ]

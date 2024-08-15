@@ -15,7 +15,7 @@ from decimal import Decimal
 import json
 
 from .serializers import ServicoSerializer, PedidoSerializer, DetalhePedidoSerializer, PagamentoSerializer, ItemCarrinhoSerializer, CustomUserSerializer, AvaliacaoSerializer
-from .models import Servico, Pedido, DetalhePedido, Pagamento, ItemCarrinho, Avaliacao,Transacao,Profissional
+from .models import Servico, Pedido, DetalhePedido, Pagamento, ItemCarrinho, Avaliacao,Transacao,Profissional,CustomUser
 
 User = get_user_model()
 
@@ -76,6 +76,13 @@ def login_view(request):
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'errors': 'Invalid JSON'}, status=400)
     return JsonResponse({'status': 'error', 'errors': 'Method not allowed'}, status=405)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_usuario(request, id):
+    user = get_object_or_404(CustomUser, id=id)
+    serializer = CustomUserSerializer(user)
+    return Response(serializer.data)
 
 @csrf_exempt
 def profissional_login_view(request):
@@ -298,10 +305,12 @@ class AvaliacoesPendentesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Verifica se o usuário é um profissional
-      
-        # Filtra pagamentos concluídos que ainda não têm uma avaliação associada
-        servicos_disponiveis = Pagamento.objects.filter(status='concluido', avaliacao__isnull=True).values_list('servico', flat=True)
-        servicos = Servico.objects.filter(id__in=servicos_disponiveis)
-        serializer = ServicoSerializer(servicos, many=True)
+        # Filtra avaliações pendentes
+        avaliacoes_pendentes = Avaliacao.objects.filter(avaliado=False)  # Ajuste o campo conforme necessário
+
+        if not avaliacoes_pendentes.exists():
+            return Response({'message': 'Nenhuma avaliação pendente encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Serializa os dados das avaliações pendentes com detalhes do serviço
+        serializer = AvaliacaoSerializer(avaliacoes_pendentes, many=True)
         return Response(serializer.data)

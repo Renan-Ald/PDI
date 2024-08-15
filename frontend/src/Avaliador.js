@@ -19,7 +19,7 @@ const Avaliador = () => {
 
     const fetchServicos = async () => {
       try {
-        const response = await api.get('/avaliador/servicos');
+        const response = await api.get('avaliacoes-pendentes/');
         setServicos(response.data);
       } catch (error) {
         console.error('Erro ao buscar serviços para avaliação:', error);
