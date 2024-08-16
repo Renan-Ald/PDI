@@ -224,10 +224,20 @@ export const updateAvaliacao = async (avaliacaoId, avaliacaoData) => {
     const response = await privateApi.put(`avaliacoes/${avaliacaoId}/`, avaliacaoData);
     return response.data;
   } catch (error) {
-    console.error('Erro ao atualizar avaliação:', error);
+    if (error.response) {
+      // A requisição foi feita e o servidor respondeu com um status que não está na faixa 2xx
+      console.error('Erro ao atualizar avaliação:', error.response.data);
+    } else if (error.request) {
+      // A requisição foi feita, mas nenhuma resposta foi recebida
+      console.error('Nenhuma resposta recebida:', error.request);
+    } else {
+      // Algo aconteceu ao configurar a requisição que acionou um erro
+      console.error('Erro ao configurar requisição:', error.message);
+    }
     throw error;
   }
 };
+
 
 // Função para obter avaliação
 export const getAvaliacao = async (pagamentoId) => {
@@ -239,6 +249,7 @@ export const getAvaliacao = async (pagamentoId) => {
     throw error;
   }
 };
+
 
 // Função para criar uma avaliação
 export const createAvaliacao = async (avaliacaoData) => {
