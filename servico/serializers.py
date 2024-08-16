@@ -95,8 +95,9 @@ class PagamentoSerializer(serializers.ModelSerializer):
 ##avaliacao
 
 class AvaliacaoSerializer(serializers.ModelSerializer):
-    servico = ServicoSerializer()  # Detalhes do serviço
-    pagamento = PagamentoSerializer()  # Detalhes do pagamento
+    servico = serializers.PrimaryKeyRelatedField(queryset=Servico.objects.all())
+    pagamento = serializers.PrimaryKeyRelatedField(queryset=Pagamento.objects.all())  # Ajuste para 'pagamento'
+
 
     class Meta:
         model = Avaliacao

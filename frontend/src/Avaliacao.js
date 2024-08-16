@@ -22,7 +22,7 @@ const Avaliacao = () => {
 
         for (const pagamento of data) {
           if (!servicosMap[pagamento.servico]) {
-            const servico = await getServicoById(pagamento.servico);
+            const servico = await getServicoById(pagamento.servico.id);
             servicosMap[pagamento.servico] = servico.nome;
           }
         }
@@ -76,7 +76,7 @@ const Avaliacao = () => {
       if (avaliacao) {
         // Atualiza a avaliação existente
         await updateAvaliacao(avaliacao.id, {
-          servico: selectedPagamento.servico,
+          servico: selectedPagamento.servico.id,
           pagamento: selectedPagamento.id,
           formacao_tecnica: formacaoTecnica,
           graduacao: graduacao,
@@ -89,7 +89,7 @@ const Avaliacao = () => {
       } else {
         // Cria uma nova avaliação
         await createAvaliacao({
-          servico: selectedPagamento.servico,
+          servico: selectedPagamento.servico.id,
           pagamento: selectedPagamento.id,
           formacao_tecnica: formacaoTecnica,
           graduacao: graduacao,

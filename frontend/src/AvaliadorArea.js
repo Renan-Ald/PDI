@@ -7,8 +7,10 @@ const Avaliador = () => {
   const { profissional } = useContext(AuthContext);
   const [servicos, setServicos] = useState([]);
   const [usuarios, setUsuarios] = useState({});
+  const [servicosDetalhes, setServicosDetalhes] = useState({});
   const [modalData, setModalData] = useState(null);
   const [loadingUsuarios, setLoadingUsuarios] = useState(true);
+  const [loadingServicos, setLoadingServicos] = useState(true);
   const history = useHistory();
 
   useEffect(() => {
@@ -18,17 +20,16 @@ const Avaliador = () => {
       return;
     }
 
-    const fetchServicos = async () => {
+    const fetchAvaliacoesPendentes = async () => {
       try {
         const response = await api.get('avaliacoes-pendentes/', {
           headers: {
             Authorization: `Bearer ${profissional.token}`
           }
         });
-        console.log('Serviços recebidos:', response.data);
         setServicos(response.data);
 
-        // Fetch user details for each service
+        // precisar criar ume end point onde traga todos pelo e busque id pessoa para dados 
         const userDetailsPromises = response.data.map(servico =>
           api.get(`/usuarios/${servico.usuario}/`, {
             headers: {
@@ -42,73 +43,47 @@ const Avaliador = () => {
 
         const userDetailsResponses = await Promise.all(userDetailsPromises);
 
-        // Log each response to verify
-        userDetailsResponses.forEach((res, index) => {
-          console.log(`Detalhes do usuário ${response.data[index].usuario}:`, res.data);
-        });
-
-        const userDetails = userDetailsResponses.reduce((acc, current) => {
-          if (current.data && current.data.email) {
-            acc[current.data.email] = current.data; // Use a unique identifier like email
+        const userDetails = userDetailsResponses.reduce((acc, current, index) => {
+          if (current.data && current.data.nome_completo) {
+            acc[response.data[index].usuario] = current.data; // Use o ID do usuário como chave
           }
           return acc;
         }, {});
 
-        console.log('Detalhes dos usuários:', userDetails);
         setUsuarios(userDetails);
         setLoadingUsuarios(false);
+
+        // Fetch service details for each service
+        const servicoDetailsPromises = response.data.map(servico =>
+          api.get(`/servicos/${servico.servico}/`, {
+            headers: {
+              Authorization: `Bearer ${profissional.token}`
+            }
+          }).catch(error => {
+            console.error(`Erro ao buscar detalhes do serviço ${servico.servico}:`, error);
+            return { data: null };
+          })
+        );
+
+        const servicoDetailsResponses = await Promise.all(servicoDetailsPromises);
+
+        const servicoDetails = servicoDetailsResponses.reduce((acc, current, index) => {
+          if (current.data && current.data.nome) {
+            acc[response.data[index].servico] = current.data; // Use o ID do serviço como chave
+          }
+          return acc;
+        }, {});
+
+        setServicosDetalhes(servicoDetails);
+        setLoadingServicos(false);
+
       } catch (error) {
         console.error('Erro ao buscar serviços:', error);
       }
     };
 
-    fetchServicos();
+    fetchAvaliacoesPendentes();
   }, [profissional, history]);
-
-  // Function to retry fetching user details
-  const retryFetchUserDetails = async () => {
-    try {
-      setLoadingUsuarios(true);
-      const response = await api.get('avaliacoes-pendentes/', {
-        headers: {
-          Authorization: `Bearer ${profissional.token}`
-        }
-      });
-      const userDetailsPromises = response.data.map(servico =>
-        api.get(`/usuarios/${servico.usuario}/`, {
-          headers: {
-            Authorization: `Bearer ${profissional.token}`
-          }
-        }).catch(error => {
-          console.error(`Erro ao buscar detalhes do usuário ${servico.usuario}:`, error);
-          return { data: null };
-        })
-      );
-
-      const userDetailsResponses = await Promise.all(userDetailsPromises);
-      const userDetails = userDetailsResponses.reduce((acc, current) => {
-        if (current.data && current.data.email) {
-          acc[current.data.email] = current.data; // Use a unique identifier like email
-        }
-        return acc;
-      }, {});
-
-      setUsuarios(userDetails);
-      setLoadingUsuarios(false);
-    } catch (error) {
-      console.error('Erro ao tentar buscar detalhes do usuário novamente:', error);
-    }
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (loadingUsuarios) {
-        retryFetchUserDetails();
-      }
-    }, 10000); // Tenta novamente a cada 10 segundos
-
-    return () => clearInterval(interval);
-  }, [loadingUsuarios]);
 
   const handleAvaliarClick = (servico) => {
     setModalData(servico);
@@ -164,7 +139,7 @@ const Avaliador = () => {
                 <tbody>
                   {servicos.map(servico => (
                     <tr key={servico.id}>
-                      <td>{servico.servico.nome}</td>
+                      <td>{servicosDetalhes[servico.servico]?.nome || 'Carregando...'}</td>
                       <td>
                         {usuarios[servico.usuario]?.nome_completo || 'Carregando...'}
                       </td>
@@ -199,7 +174,7 @@ const Avaliador = () => {
                 </button>
               </div>
               <div className="modal-body">
-                <p><strong>Serviço:</strong> {modalData.servico.nome}</p>
+                <p><strong>Serviço:</strong> {servicosDetalhes[modalData.servico]?.nome}</p>
                 <p><strong>Descrição:</strong> {modalData.servico.descricao}</p>
                 <div className="mt-3">
                   <p><strong>Formação Técnica:</strong> {modalData.formacao_tecnica || 'Não informado'}</p>
