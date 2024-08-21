@@ -1,7 +1,7 @@
 from django.urls import path,include  
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter    
-from .views import register, login_view, ServicoListView, ServicoDetailView, PedidoViewSet, DetalhePedidoViewSet,PagamentoViewSet,finalizar_checkout,webhook_pagamento,ItemCarrinhoViewSet,user_profile,AvaliacaoViewSet,pagamentos_concluidos,AvaliacoesPendentesView,get_usuario
+from .views import register, login_view, ServicoListView, ServicoDetailView, PedidoViewSet, DetalhePedidoViewSet,PagamentoViewSet,finalizar_checkout,webhook_pagamento,ItemCarrinhoViewSet,user_profile,AvaliacaoViewSet,pagamentos_concluidos,AvaliacoesPendentesView,get_usuario,ResultadoViewSet,TarefaViewSet,BlocoViewSet
 from . import views
 
 
@@ -11,6 +11,9 @@ router.register(r'detalhes-pedidos', DetalhePedidoViewSet)
 router.register(r'pagamentos', PagamentoViewSet)
 router.register(r'carrinho', ItemCarrinhoViewSet)
 router.register(r'avaliacoes', AvaliacaoViewSet, basename='avaliacao')
+router.register(r'resultados', ResultadoViewSet)
+router.register(r'blocos', BlocoViewSet)
+router.register(r'tarefas', TarefaViewSet)
 urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login_view, name='login'),

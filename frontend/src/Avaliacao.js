@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getPagamentosConcluidos, getAvaliacao, createAvaliacao, updateAvaliacao, getServicoById } from './api';
+import './Avaliacao.css'; // Certifique-se de ter o CSS para ajustes de estilo
 
 const Avaliacao = () => {
   const [pagamentos, setPagamentos] = useState([]);
@@ -12,7 +13,8 @@ const Avaliacao = () => {
   const [cargoDesejado, setCargoDesejado] = useState('');
   const [nucleoDeTrabalho, setNucleoDeTrabalho] = useState('');
   const [dataAdmissao, setDataAdmissao] = useState('');
-  const [servicos, setServicos] = useState({}); // Mapeia IDs de serviços para nomes
+  const [servicos, setServicos] = useState({});
+  const [modalOpen, setModalOpen] = useState(false); // Controle do estado do modal
 
   useEffect(() => {
     const fetchPagamentos = async () => {
@@ -39,8 +41,8 @@ const Avaliacao = () => {
 
   const handlePagamentoSelect = async (pagamento) => {
     setSelectedPagamento(pagamento);
+    setModalOpen(true); // Abre o modal
     try {
-      // Buscar a avaliação existente, se houver
       const existingAvaliacao = await getAvaliacao(pagamento.id);
       setAvaliacao(existingAvaliacao);
 
@@ -67,14 +69,13 @@ const Avaliacao = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault(); // Certifique-se de que o evento é recebido
     if (!selectedPagamento) {
       alert('Por favor, selecione um pagamento primeiro.');
       return;
     }
     try {
       if (avaliacao) {
-        // Atualiza a avaliação existente
         await updateAvaliacao(avaliacao.id, {
           servico: selectedPagamento.servico.id,
           pagamento: selectedPagamento.id,
@@ -87,7 +88,6 @@ const Avaliacao = () => {
           data_admissao: dataAdmissao,
         });
       } else {
-        // Cria uma nova avaliação
         await createAvaliacao({
           servico: selectedPagamento.servico.id,
           pagamento: selectedPagamento.id,
@@ -110,69 +110,102 @@ const Avaliacao = () => {
       setDataAdmissao('');
       setSelectedPagamento(null);
       setAvaliacao(null);
-      // Atualizar lista de pagamentos
       const data = await getPagamentosConcluidos();
       setPagamentos(data);
     } catch (error) {
       console.error('Erro ao enviar avaliação:', error);
+    } finally {
+      setModalOpen(false); // Fecha o modal após o envio
     }
   };
 
   return (
-    <div>
+    <div className="container mt-5">
       <h1>Avaliações</h1>
-      {!selectedPagamento ? (
-        <div>
-          <h2>Escolha um Serviço para Avaliar</h2>
-          <ul>
+      <div className="table-responsive">
+        <table className="table table-striped">
+          <thead className='tr-av'>
+            <tr >
+              <th>Serviço</th>
+              <th>Valor</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody className='tr-av' > 
             {pagamentos.length > 0 ? (
-              pagamentos.map(pagamento => (
-                <li key={pagamento.id}>
-                  <h3>{servicos[pagamento.servico] || 'Carregando...'}</h3>
-                  <p>Valor: {pagamento.valor_liquido}</p>
-                  <button onClick={() => handlePagamentoSelect(pagamento)}>Selecionar</button>
-                </li>
+              pagamentos.map((pagamento) => (
+                <tr key={pagamento.id}>
+                  <td>{servicos[pagamento.servico] || 'Carregando...'}</td>
+                  <td>{pagamento.valor_liquido}</td>
+                  <td>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => handlePagamentoSelect(pagamento)}
+                    >
+                      Avaliar
+                    </button>
+                  </td>
+                </tr>
               ))
             ) : (
-              <p>Nenhum pagamento concluído encontrado.</p>
+              <tr>
+                <td colSpan="3" className="text-center">Nenhum pagamento concluído encontrado.</td>
+              </tr>
             )}
-          </ul>
-        </div>
-      ) : (
-        <div>
-          <h2>Avaliar Serviço: {servicos[selectedPagamento.servico] || 'Carregando...'}</h2>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <label>Formação Técnica:</label>
-              <input type="text" value={formacaoTecnica} onChange={(e) => setFormacaoTecnica(e.target.value)} />
+          </tbody>
+        </table>
+      </div>
+
+      {/* Modal para Avaliação */}
+      {modalOpen && (
+        <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }} tabIndex="-1" role="dialog" aria-labelledby="avaliacaoModalLabel" aria-hidden="true">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="avaliacaoModalLabel">Detalhes da Avaliação</h5>
+                <button type="button" className="close" onClick={() => setModalOpen(false)}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p><strong>Serviço:</strong> {servicos[selectedPagamento?.servico]}</p>
+                <form onSubmit={handleSubmit}>
+                  <div className="form-group mt-3">
+                    <label htmlFor="formacaoTecnica">Formação Técnica:</label>
+                    <input type="text" className="form-control" value={formacaoTecnica} onChange={(e) => setFormacaoTecnica(e.target.value)} />
+                  </div>
+                  <div className="form-group mt-3">
+                    <label htmlFor="graduacao">Graduação:</label>
+                    <input type="text" className="form-control" value={graduacao} onChange={(e) => setGraduacao(e.target.value)} />
+                  </div>
+                  <div className="form-group mt-3">
+                    <label htmlFor="posgraduacao">Pós-graduação:</label>
+                    <input type="text" className="form-control" value={posgraduacao} onChange={(e) => setPosgraduacao(e.target.value)} />
+                  </div>
+                  <div className="form-group mt-3">
+                    <label htmlFor="formacaoComplementar">Formação Complementar:</label>
+                    <input type="text" className="form-control" value={formacaoComplementar} onChange={(e) => setFormacaoComplementar(e.target.value)} />
+                  </div>
+                  <div className="form-group mt-3">
+                    <label htmlFor="cargoDesejado">Cargo Desejado:</label>
+                    <input type="text" className="form-control" value={cargoDesejado} onChange={(e) => setCargoDesejado(e.target.value)} />
+                  </div>
+                  <div className="form-group mt-3">
+                    <label htmlFor="nucleoDeTrabalho">Núcleo de Trabalho:</label>
+                    <input type="text" className="form-control" value={nucleoDeTrabalho} onChange={(e) => setNucleoDeTrabalho(e.target.value)} />
+                  </div>
+                  <div className="form-group mt-3">
+                    <label htmlFor="dataAdmissao">Data de Admissão:</label>
+                    <input type="date" className="form-control" value={dataAdmissao} onChange={(e) => setDataAdmissao(e.target.value)} />
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Fechar</button>
+                    <button type="submit" className="btn btn-primary">Enviar Avaliação</button>
+                  </div>
+                </form>
+              </div>
             </div>
-            <div>
-              <label>Graduação:</label>
-              <input type="text" value={graduacao} onChange={(e) => setGraduacao(e.target.value)} />
-            </div>
-            <div>
-              <label>Pós-graduação:</label>
-              <input type="text" value={posgraduacao} onChange={(e) => setPosgraduacao(e.target.value)} />
-            </div>
-            <div>
-              <label>Formação Complementar:</label>
-              <input type="text" value={formacaoComplementar} onChange={(e) => setFormacaoComplementar(e.target.value)} />
-            </div>
-            <div>
-              <label>Cargo Desejado:</label>
-              <input type="text" value={cargoDesejado} onChange={(e) => setCargoDesejado(e.target.value)} />
-            </div>
-            <div>
-              <label>Núcleo de Trabalho:</label>
-              <input type="text" value={nucleoDeTrabalho} onChange={(e) => setNucleoDeTrabalho(e.target.value)} />
-            </div>
-            <div>
-              <label>Data de Admissão:</label>
-              <input type="date" value={dataAdmissao} onChange={(e) => setDataAdmissao(e.target.value)} />
-            </div>
-            <button type="submit">{avaliacao ? 'Atualizar Avaliação' : 'Enviar Avaliação'}</button>
-          </form>
-          <button onClick={() => setSelectedPagamento(null)}>Voltar</button>
+          </div>
         </div>
       )}
     </div>

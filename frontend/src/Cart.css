@@ -1,0 +1,24 @@
+.cart-background {
+    background-color: #333 !important; /* Cor de fundo */
+    color: white; /* Cor do texto padrão */
+    padding: 20px; /* Adiciona um espaçamento interno */
+    border-radius: 8px; /* Arredonda os cantos do contêiner */
+}
+.plus{
+    background-color: #333 !important;
+    color: white;
+    border-color: #333;
+}
+/* Adiciona cor de fundo nas linhas da lista */
+.list-group-item {
+    background-color: #444; /* Cor de fundo das linhas */
+    border: none; /* Remove bordas */
+}
+.bi{
+    color: white;
+}
+/* Estilo das letras dentro da lista */
+.list-group-item h5,
+.list-group-item p {
+    color: white; /* Cor do texto das linhas da lista */
+}

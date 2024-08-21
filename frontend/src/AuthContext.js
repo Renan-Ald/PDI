@@ -5,7 +5,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({ token: null });
-  const [profissional, setProfissional] = useState({ token: null });
+  const [profissional, setProfissional] = useState({ token: null, user_id: null });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -14,8 +14,9 @@ export const AuthProvider = ({ children }) => {
     }
 
     const profissionalToken = localStorage.getItem('profissionalToken');
-    if (profissionalToken) {
-      setProfissional({ token: profissionalToken });
+    const profissionalId = localStorage.getItem('profissionalId');
+    if (profissionalToken && profissionalId) {
+      setProfissional({ token: profissionalToken, user_id: profissionalId });
     }
   }, []);
 
@@ -26,7 +27,8 @@ export const AuthProvider = ({ children }) => {
 
   const loginProfissional = (data) => {
     localStorage.setItem('profissionalToken', data.access);
-    setProfissional({ token: data.access });
+    localStorage.setItem('profissionalId', data.user_id); // Supondo que data contenha user_id
+    setProfissional({ token: data.access, user_id: data.user_id });
   };
 
   const logout = () => {
@@ -36,7 +38,8 @@ export const AuthProvider = ({ children }) => {
 
   const logoutProfissional = () => {
     localStorage.removeItem('profissionalToken');
-    setProfissional({ token: null });
+    localStorage.removeItem('profissionalId');
+    setProfissional({ token: null, user_id: null });
   };
 
   return (

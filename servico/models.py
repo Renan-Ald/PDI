@@ -135,3 +135,32 @@ class Avaliacao(models.Model):
 
     def __str__(self):
         return f'Avaliação de {self.usuario} para {self.servico}'
+    
+class Resultado(models.Model):
+    idresultado = models.AutoField(primary_key=True)
+    avaliacao_id = models.OneToOneField(Avaliacao, on_delete=models.CASCADE, related_name='resultado')  # Renomeado para 'avaliacao'
+    data_resultado = models.DateTimeField(auto_now_add=True)
+    validade = models.DateField()
+    responsavel = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f'Resultado de Avaliação {self.avaliacao.id} - Responsável: {self.responsavel}'
+    
+class Bloco(models.Model):
+    idbloco = models.AutoField(primary_key=True)
+    descricao = models.TextField()
+    resultado_id = models.ForeignKey(Resultado, on_delete=models.CASCADE, related_name='blocos')  # Renomeado para 'resultado'
+
+    def __str__(self):
+        return f'Bloco {self.idbloco} - {self.descricao[:50]}...'
+
+class Tarefa(models.Model):
+    id_tarefas = models.AutoField(primary_key=True)
+    tarefa = models.CharField(max_length=255)
+    prazo_registro = models.DateTimeField()
+    descricao = models.TextField()
+    aprendizado = models.CharField(max_length=255)
+    bloco_id = models.ForeignKey(Bloco, on_delete=models.CASCADE, related_name='tarefas')  # Renomeado para 'bloco'
+
+    def __str__(self):
+        return f'Tarefa {self.id_tarefas} - {self.tarefa}'
