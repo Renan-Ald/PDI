@@ -29,14 +29,15 @@ const Home = () => {
       const response = await addToCart(servicoId, 1); // Quantidade padrão de 1
       console.log('Resposta da API ao adicionar ao carrinho:', response);
       alert('Serviço adicionado ao carrinho!');
+
     } catch (error) {
       console.error('Erro ao adicionar ao carrinho:', error.response?.data || error.message);
     }
   };
 
   return (
-    <div className="home">
-      <section className="hero">
+    <div id='topo' className="home">
+      <section  className="hero">
         <div className="container">
           <div className="hero-content">
             <div className="hero-text">
@@ -126,7 +127,7 @@ const Home = () => {
               <h2 className="product-title">Lorem ipsum, dolor sit amet consectetur adipisicing elit</h2>
               <h3 className="product-title">{service.nome}</h3>
               <h4 className="product-price">R${service.valor}</h4>
-              <a className="btn btn-cart" onClick={() => handleAddToCart(service.id)}>Comprar</a> {/* Botão com gradiente */}
+              <a className="btn btn-cart" href="#topo" onClick={() => handleAddToCart(service.id)}>Comprar</a> {/* Botão com gradiente */}
             </div>
           </div>
         ))}

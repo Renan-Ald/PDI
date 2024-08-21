@@ -1,5 +1,5 @@
 from rest_framework import serializers, viewsets  # Importando viewsets aqui
-from .models import Servico ,DetalhePedido,Pedido, Pagamento,ItemCarrinho, CustomUser,Avaliacao,Transacao
+from .models import Servico ,DetalhePedido,Pedido, Pagamento,ItemCarrinho, CustomUser,Avaliacao,Transacao,Tarefa,Bloco,Resultado
 
 class ServicoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -111,5 +111,24 @@ class AvaliacaoSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['usuario'] = self.context['request'].user
         return super().create(validated_data)
+class AvaliacaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Avaliacao
+        fields = '__all__'
+
+class ResultadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Resultado
+        fields = '__all__'
+
+class BlocoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bloco
+        fields = '__all__'
+
+class TarefaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tarefa
+        fields = '__all__'
 
 

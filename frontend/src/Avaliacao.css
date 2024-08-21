@@ -1,0 +1,37 @@
+/* Estiliza o fundo da página */
+
+
+/* Estiliza o conteúdo do modal */
+.modal-content {
+  background-color: #444 !important; /* Fundo do modal um pouco mais claro */
+  color: white; /* Cor do texto do modal */
+}
+
+/* Estiliza os cabeçalhos do modal */
+.modal-header {
+  border-bottom: 1px solid #555; /* Linha separadora mais clara */
+}
+
+/* Estiliza os botões */
+.btn {
+  background-color: #555; /* Cor de fundo dos botões */
+  color: white; /* Cor do texto dos botões */
+}
+
+.btn:hover {
+  background-color: #666; /* Cor de fundo ao passar o mouse */
+}
+
+/* Estiliza os campos de entrada */
+input {
+  background-color: #666; /* Cor de fundo dos campos */
+  color: white; /* Cor do texto nos campos */
+  border: 1px solid #777; /* Cor da borda dos campos */
+}
+
+input::placeholder {
+  color: #aaa; /* Cor do texto do placeholder */
+}
+.tr-av{
+  color: white !important;
+}

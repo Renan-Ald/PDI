@@ -14,8 +14,8 @@ from django.utils import timezone
 from decimal import Decimal
 import json
 
-from .serializers import ServicoSerializer, PedidoSerializer, DetalhePedidoSerializer, PagamentoSerializer, ItemCarrinhoSerializer, CustomUserSerializer, AvaliacaoSerializer
-from .models import Servico, Pedido, DetalhePedido, Pagamento, ItemCarrinho, Avaliacao,Transacao,Profissional,CustomUser
+from .serializers import ServicoSerializer, PedidoSerializer, DetalhePedidoSerializer, PagamentoSerializer, ItemCarrinhoSerializer, CustomUserSerializer, AvaliacaoSerializer,ResultadoSerializer,TarefaSerializer,BlocoSerializer
+from .models import Servico, Pedido, DetalhePedido, Pagamento, ItemCarrinho, Avaliacao,Transacao,Profissional,CustomUser,Resultado,Bloco,Tarefa
 
 User = get_user_model()
 
@@ -69,7 +69,9 @@ def login_view(request):
                     'status': 'success',
                     'access': str(refresh.access_token),
                     'refresh': str(refresh),
-                    'is_avaliador': is_avaliador  # Adicione essa linha
+                    'is_avaliador': is_avaliador,
+                    'user_id': user.id,  # Adiciona o ID do usuário
+                    'nome': user.nome_completo  # Adiciona o nome do usuário (substitua 'nome_completo' pelo campo correspondente)
                 })
             else:
                 return JsonResponse({'status': 'error', 'errors': 'Invalid login'}, status=400)
@@ -104,6 +106,7 @@ def profissional_login_view(request):
                         'status': 'success',
                         'access': str(refresh.access_token),
                         'refresh': str(refresh),
+                        'user_id': profissional.id,
                         'message': 'Login bem-sucedido'
                     })
                 else:
@@ -314,3 +317,18 @@ class AvaliacoesPendentesView(APIView):
         # Serializa os dados das avaliações pendentes com detalhes do serviço
         serializer = AvaliacaoSerializer(avaliacoes_pendentes, many=True)
         return Response(serializer.data)
+class AvaliacaoViewSet(viewsets.ModelViewSet):
+    queryset = Avaliacao.objects.all()
+    serializer_class = AvaliacaoSerializer
+
+class ResultadoViewSet(viewsets.ModelViewSet):
+    queryset = Resultado.objects.all()
+    serializer_class = ResultadoSerializer
+
+class BlocoViewSet(viewsets.ModelViewSet):
+    queryset = Bloco.objects.all()
+    serializer_class = BlocoSerializer
+
+class TarefaViewSet(viewsets.ModelViewSet):
+    queryset = Tarefa.objects.all()
+    serializer_class = TarefaSerializer

@@ -105,10 +105,10 @@
 }
 
 /* fim botao */
-
+/* body em todas as paginas */
 body {
-  background-color: #121212; /* Fundo escuro */
-  color: #FFFFFF; /* Texto branco */
+  background-color: #333 !important; /* Fundo escuro */
+  color: #FFFFFF !important; /* Texto branco */
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;

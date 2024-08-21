@@ -1,15 +1,93 @@
 /* Header.css */
+
+/* Estilo para os links da navbar e dropdown */
 .navbar-nav .nav-link:hover,
 .navbar-nav .dropdown-item:hover {
-  background-color: transparent; /* Cor de fundo transparente */
-  color: inherit; /* Mantém a cor do texto original */
+  background-color: #333; /* Cor de fundo ao passar o mouse */
+  color: #fff; /* Cor do texto ao passar o mouse */
 }
 
+/* Estilo para o fundo do dropdown */
 .navbar-nav .dropdown-menu {
-  background-color: #f8f9fa; /* Cor de fundo do dropdown */
+  background-color: #333; /* Cor de fundo do dropdown */
+  border-color: #333; /* Cor da borda do dropdown */
 }
 
-/* Garantir que o dropdown funcione corretamente */
-.nav-item .dropdown-toggle::after {
-  display: none; /* Remove o ícone de seta padrão */
+/* Estilo para os itens do dropdown */
+.navbar-nav .dropdown-item {
+  color: #fff; /* Cor do texto dos itens do dropdown */
 }
+
+
+/* Ícone no link do dropdown */
+.navbar-nav .nav-link i {
+  color: #fff; /* Cor do ícone */
+}
+
+/* Adicionar estilo ao passar o mouse sobre o dropdown */
+.navbar-nav .dropdown-item:hover {
+  background-color: #2c2c2c; /* Um tom mais claro para o hover */
+  color: #fff; /* Cor do texto ao passar o mouse */
+}
+/* Header.css */
+
+/* Estilos para a navbar */
+.navbar {
+  background-color: #2c2c2c; /* Cor de fundo da navbar */
+  padding: 10px; /* Espaçamento interno */
+}
+.navbar-light .navbar-nav .nav-link {
+  color: white !important; /* Define a cor do texto como branca */
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+  color: #ccc; /* Cor do texto ao passar o mouse */
+}
+/* Estilo para os links da navbar */
+.navbar-nav .nav-link {
+  color: #fff; /* Cor do texto */
+}
+
+/* Estilo para o dropdown */
+.dropdown-menu {
+  position: absolute; /* Posição absoluta para o dropdown */
+  background-color: #fff; /* Cor de fundo do dropdown */
+  border: 1px solid #444; /* Borda do dropdown */
+  z-index: 1000; /* Para garantir que fique acima de outros elementos */
+  display: flex;
+  flex-direction: column; /* Coluna para os itens do dropdown */
+}
+
+/* Estilo para os itens do dropdown */
+.dropdown-item {
+  color: #fff; /* Cor do texto dos itens do dropdown */
+  padding: 10px; /* Espaçamento interno */
+  text-decoration: none; /* Remover underline */
+}
+
+/* Adicionar estilo ao passar o mouse sobre os itens do dropdown */
+.dropdown-item:hover {
+  background-color: #444; /* Cor de fundo ao passar o mouse */
+  color: #fff; /* Cor do texto ao passar o mouse */
+}
+
+/* Estilo para o botão de logout */
+.dropdown-item i {
+  margin-right: 8px; /* Margem direita para o ícone */
+}
+.cart-indicator {
+  position: absolute;
+  top: 4px; /* Aumente este valor para mover a bolinha para cima */
+  right: 4px; /* Aumente este valor para mover a bolinha para a esquerda */
+  background-color: red;
+  color: white;
+  border-radius: 50%; /* Faz o fundo ser um círculo */
+  width: 10px; /* Largura fixa */
+  height: 10px; /* Altura fixa */
+  display: flex; /* Usando flexbox para centralizar o texto */
+  align-items: center; /* Centralizando verticalmente */
+  justify-content: center; /* Centralizando horizontalmente */
+  font-size: 6px; /* Tamanho da fonte */
+  line-height: 14px; /* Alinha o texto verticalmente no círculo */
+}
+

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getCartItems, updateCartItem, deleteCartItem, checkout } from './api';
-
+import './Cart.css'
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -62,35 +62,27 @@ const Cart = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <link
-        rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      />
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css"
-      />
-      <h1 className="mb-4">Meu Carrinho</h1>
-      <h3 className="mb-4">Total: R${total.toFixed(2)}</h3>
-      <ul className="list-group mb-3">
+    <div id='cart' className="container mt-5 cart-background">
+      <h1 className="mb-4 text-white">Meu Carrinho</h1>
+      <h3 className="mb-4 text-white">Total: R${total.toFixed(2)}</h3>
+      <ul className="list-group mb-3 cart-background">
         {cartItems.map(item => (
-          <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center">
+          <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center cart-background">
             <div>
-              <h5>{item.servico.nome}</h5>
-              <p>{item.servico.descricao}</p>
-              <p>Preço: R${item.servico.valor}</p>
+              <h5 className="text-white">{item.servico.nome}</h5>
+              <p className="text-white">{item.servico.descricao}</p>
+              <p className="text-white">Preço: R${item.servico.valor}</p>
             </div>
             <div className="d-flex align-items-center">
               <button
-                className="btn btn-light"
+                className="btn btn-light plus "
                 onClick={() => handleUpdateQuantity(item.id, item.quantidade + 1, item.servico.id)}
               >
                 <i className="bi bi-plus-circle"></i>
               </button>
               <span className="mx-3">{item.quantidade}</span>
               <button
-                className="btn btn-light"
+                className="btn btn-light plus"
                 onClick={() => handleUpdateQuantity(item.id, item.quantidade - 1, item.servico.id)}
               >
                 <i className="bi bi-dash-circle"></i>
@@ -107,7 +99,7 @@ const Cart = () => {
       </ul>
       <button className="btn btn-primary" onClick={handleCheckout}>Finalizar Compra</button>
     </div>
-  );
+  );  
 };
 
 export default Cart;

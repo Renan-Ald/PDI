@@ -172,12 +172,15 @@ export const getUserProfile = async () => {
 };
 
 // Função para login
+
 export const loginUser = async (email, password) => {
   try {
     const response = await axios.post('http://localhost:8000/api/login/', { email, password });
-    const { access, refresh } = response.data; // Supondo que o token de acesso e de atualização estão na resposta
-    localStorage.setItem('token', access); // Armazena o token de acesso no localStorage
-    localStorage.setItem('refreshToken', refresh); // Armazena o token de atualização, se necessário
+    const { access, refresh, nome } = response.data; // A API deve retornar o nome do usuário
+    localStorage.setItem('token', access);
+    localStorage.setItem('access', access); // Armazena o token de acesso no localStorage
+    localStorage.setItem('refresh', refresh); // Armazena o token de atualização, se necessário
+    localStorage.setItem('nome_usuario', nome); // Armazena o nome do usuário
     return response.data; // Retorna os dados da resposta
   } catch (error) {
     console.error('Erro ao fazer login:', error);

@@ -73,7 +73,7 @@ const Cart = () => {
         ))}
       </ul>
       <h2>Total: {totalAmount.toFixed(2)}</h2>
-      <button onClick={handleCheckout}>Finalizar Compra</button>
+      <button onClick={handleCheckout}>Finalizar Compra1</button>
     </div>
   );
 };

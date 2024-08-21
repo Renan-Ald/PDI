@@ -8,9 +8,7 @@ const Avaliador = () => {
   const [servicos, setServicos] = useState([]);
   const [usuarios, setUsuarios] = useState({});
   const [servicosDetalhes, setServicosDetalhes] = useState({});
-  const [modalData, setModalData] = useState(null);
-  const [loadingUsuarios, setLoadingUsuarios] = useState(true);
-  const [loadingServicos, setLoadingServicos] = useState(true);
+  const [loading, setLoading] = useState({ usuarios: true, servicos: true });
   const history = useHistory();
 
   useEffect(() => {
@@ -29,8 +27,17 @@ const Avaliador = () => {
         });
         setServicos(response.data);
 
-        // precisar criar ume end point onde traga todos pelo e busque id pessoa para dados 
-        const userDetailsPromises = response.data.map(servico =>
+        await fetchUsuariosEServicosDetalhes(response.data);
+
+      } catch (error) {
+        console.error('Erro ao buscar serviços:', error);
+        alert('Erro ao carregar as avaliações pendentes.');
+      }
+    };
+
+    const fetchUsuariosEServicosDetalhes = async (avaliacoes) => {
+      try {
+        const userDetailsPromises = avaliacoes.map(servico =>
           api.get(`/usuarios/${servico.usuario}/`, {
             headers: {
               Authorization: `Bearer ${profissional.token}`
@@ -41,20 +48,7 @@ const Avaliador = () => {
           })
         );
 
-        const userDetailsResponses = await Promise.all(userDetailsPromises);
-
-        const userDetails = userDetailsResponses.reduce((acc, current, index) => {
-          if (current.data && current.data.nome_completo) {
-            acc[response.data[index].usuario] = current.data; // Use o ID do usuário como chave
-          }
-          return acc;
-        }, {});
-
-        setUsuarios(userDetails);
-        setLoadingUsuarios(false);
-
-        // Fetch service details for each service
-        const servicoDetailsPromises = response.data.map(servico =>
+        const servicoDetailsPromises = avaliacoes.map(servico =>
           api.get(`/servicos/${servico.servico}/`, {
             headers: {
               Authorization: `Bearer ${profissional.token}`
@@ -65,47 +59,57 @@ const Avaliador = () => {
           })
         );
 
-        const servicoDetailsResponses = await Promise.all(servicoDetailsPromises);
+        const [userDetailsResponses, servicoDetailsResponses] = await Promise.all([
+          Promise.all(userDetailsPromises),
+          Promise.all(servicoDetailsPromises)
+        ]);
 
-        const servicoDetails = servicoDetailsResponses.reduce((acc, current, index) => {
-          if (current.data && current.data.nome) {
-            acc[response.data[index].servico] = current.data; // Use o ID do serviço como chave
+        const userDetails = userDetailsResponses.reduce((acc, current, index) => {
+          if (current.data && current.data.nome_completo) {
+            acc[avaliacoes[index].usuario] = current.data;
           }
           return acc;
         }, {});
 
+        const servicoDetails = servicoDetailsResponses.reduce((acc, current, index) => {
+          if (current.data && current.data.nome) {
+            acc[avaliacoes[index].servico] = current.data;
+          }
+          return acc;
+        }, {});
+
+        setUsuarios(userDetails);
         setServicosDetalhes(servicoDetails);
-        setLoadingServicos(false);
+        setLoading({ usuarios: false, servicos: false });
 
       } catch (error) {
-        console.error('Erro ao buscar serviços:', error);
+        console.error('Erro ao buscar detalhes dos usuários e serviços:', error);
+        alert('Erro ao carregar detalhes dos usuários e serviços.');
       }
     };
 
     fetchAvaliacoesPendentes();
   }, [profissional, history]);
 
-  const handleAvaliarClick = (servico) => {
-    setModalData(servico);
-    // Show the modal
-    window.$('#avaliacaoModal').modal('show');
-  };
+  const handleAvaliarClick = async (servico) => {
+    const postData = {
+      avaliacao_id: servico.id,
+      validade: "2024-12-31",
+      responsavel: profissional.user_id,
+      data_resultado: "2024-12-31"
+    };
 
-  const handleAvaliarSubmit = async () => {
     try {
-      await api.post(`/avaliacoes/${modalData.id}/`, { avaliacao: modalData.avaliacaoTexto }, {
+      await api.post('resultados/', postData, {
         headers: {
           Authorization: `Bearer ${profissional.token}`
         }
       });
-
       alert('Avaliação enviada com sucesso!');
-      setServicos(prevServicos => prevServicos.filter(servico => servico.id !== modalData.id));
-      setModalData(null);
-      // Hide the modal
-      window.$('#avaliacaoModal').modal('hide');
+      history.push('/avaliacao-resultado');
     } catch (error) {
-      console.error('Erro ao enviar avaliação:', error);
+      console.error('Erro ao enviar avaliação:', error.response?.data || error.message);
+      alert('Erro ao enviar a avaliação. Tente novamente.');
     }
   };
 
@@ -127,86 +131,46 @@ const Avaliador = () => {
               <p className="mb-6 lead text-secondary">
                 Aqui estão os serviços que precisam ser avaliados. Clique no botão "Avaliar" para fornecer feedback sobre os serviços.
               </p>
-              <table className="table table-striped table-bordered">
-                <thead>
-                  <tr>
-                    <th>Serviço</th>
-                    <th>Nome do Usuário</th>
-                    <th>Status</th>
-                    <th>Ação</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {servicos.map(servico => (
-                    <tr key={servico.id}>
-                      <td>{servicosDetalhes[servico.servico]?.nome || 'Carregando...'}</td>
-                      <td>
-                        {usuarios[servico.usuario]?.nome_completo || 'Carregando...'}
-                      </td>
-                      <td>{servico.avaliado ? 'Feito' : 'Não Feito'}</td>
-                      <td>
-                        {!servico.avaliado && (
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => handleAvaliarClick(servico)}
-                          >
-                            Avaliar
-                          </button>
-                        )}
-                      </td>
+
+              {loading.usuarios || loading.servicos ? (
+                <p>Carregando dados...</p>
+              ) : (
+                <table className="table table-striped table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Serviço</th>
+                      <th>Nome do Usuário</th>
+                      <th>Status</th>
+                      <th>Ação</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {servicos.map(servico => (
+                      <tr key={servico.id}>
+                        <td>{servicosDetalhes[servico.servico]?.nome || 'Desconhecido'}</td>
+                        <td>
+                          {usuarios[servico.usuario]?.nome_completo || 'Desconhecido'}
+                        </td>
+                        <td>{servico.avaliado ? 'Feito' : 'Não Feito'}</td>
+                        <td>
+                          {!servico.avaliado && (
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => handleAvaliarClick(servico)}
+                            >
+                              Avaliar
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </div>
       </section>
-
-      {modalData && (
-        <div className="modal fade" id="avaliacaoModal" tabIndex="-1" role="dialog" aria-labelledby="avaliacaoModalLabel" aria-hidden="true">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="avaliacaoModalLabel">Detalhes da Avaliação</h5>
-                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <p><strong>Serviço:</strong> {servicosDetalhes[modalData.servico]?.nome}</p>
-                <p><strong>Descrição:</strong> {modalData.servico.descricao}</p>
-                <div className="mt-3">
-                  <p><strong>Formação Técnica:</strong> {modalData.formacao_tecnica || 'Não informado'}</p>
-                  <p><strong>Graduação:</strong> {modalData.graduacao || 'Não informado'}</p>
-                  <p><strong>Pós-graduação:</strong> {modalData.posgraduacao || 'Não informado'}</p>
-                  <p><strong>Formação Complementar:</strong> {modalData.formacao_complementar || 'Não informado'}</p>
-                  <p><strong>Cargo Desejado:</strong> {modalData.cargo_desejado || 'Não informado'}</p>
-                  <p><strong>Núcleo de Trabalho:</strong> {modalData.nucleo_de_trabalho || 'Não informado'}</p>
-                  <p><strong>Data de Admissão:</strong> {modalData.data_admissao}</p>
-                  <p><strong>Data da Avaliação:</strong> {modalData.data_avaliacao}</p>
-                  <p><strong>Avaliador:</strong> {modalData.profissional || 'Não informado'}</p>
-                </div>
-
-                <div className="form-group mt-3">
-                  <label htmlFor="avaliacaoTexto">Sua Avaliação:</label>
-                  <textarea
-                    id="avaliacaoTexto"
-                    className="form-control"
-                    rows="3"
-                    value={modalData.avaliacaoTexto || ''}
-                    onChange={(e) => setModalData({ ...modalData, avaliacaoTexto: e.target.value })}
-                  ></textarea>
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                <button type="button" className="btn btn-primary" onClick={handleAvaliarSubmit}>Enviar Avaliação</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
