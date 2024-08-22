@@ -266,7 +266,6 @@ class AvaliacaoViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         servicos_pagos = Pagamento.objects.filter(usuario=self.request.user).values_list('servico_id', flat=True)
         return Avaliacao.objects.filter(servico_id__in=servicos_pagos, usuario=self.request.user)
-
     def perform_create(self, serializer):
         servico = serializer.validated_data['servico']
         pagamento = serializer.validated_data['pagamento']

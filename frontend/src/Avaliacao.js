@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getPagamentosConcluidos, getAvaliacao, createAvaliacao, updateAvaliacao, getServicoById } from './api';
-import './Avaliacao.css'; // Certifique-se de ter o CSS para ajustes de estilo
+import { getPagamentosConcluidos, getAvaliacao, createAvaliacao, updateAvaliacao } from './api';
+import './Avaliacao.css';
 
 const Avaliacao = () => {
   const [pagamentos, setPagamentos] = useState([]);
@@ -13,72 +13,56 @@ const Avaliacao = () => {
   const [cargoDesejado, setCargoDesejado] = useState('');
   const [nucleoDeTrabalho, setNucleoDeTrabalho] = useState('');
   const [dataAdmissao, setDataAdmissao] = useState('');
-  const [servicos, setServicos] = useState({});
-  const [modalOpen, setModalOpen] = useState(false); // Controle do estado do modal
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchPagamentos = async () => {
       try {
         const data = await getPagamentosConcluidos();
-        const servicosMap = {};
-
-        for (const pagamento of data) {
-          if (!servicosMap[pagamento.servico]) {
-            const servico = await getServicoById(pagamento.servico.id);
-            servicosMap[pagamento.servico] = servico.nome;
-          }
-        }
-
+        console.log('Pagamentos:', data);
         setPagamentos(data);
-        setServicos(servicosMap);
       } catch (error) {
-        console.error('Erro ao buscar pagamentos ou serviços:', error);
+        console.error('Erro ao buscar pagamentos:', error);
       }
     };
 
     fetchPagamentos();
   }, []);
 
-  const handlePagamentoSelect = async (pagamento) => {
+  const handlePagamentoSelect = (pagamento) => {
     setSelectedPagamento(pagamento);
-    setModalOpen(true); // Abre o modal
-    try {
-      const existingAvaliacao = await getAvaliacao(pagamento.id);
-      setAvaliacao(existingAvaliacao);
+    setModalOpen(true);
 
-      if (existingAvaliacao) {
-        setFormacaoTecnica(existingAvaliacao.formacao_tecnica);
-        setGraduacao(existingAvaliacao.graduacao);
-        setPosgraduacao(existingAvaliacao.posgraduacao);
-        setFormacaoComplementar(existingAvaliacao.formacao_complementar);
-        setCargoDesejado(existingAvaliacao.cargo_desejado);
-        setNucleoDeTrabalho(existingAvaliacao.nucleo_de_trabalho);
-        setDataAdmissao(existingAvaliacao.data_admissao);
-      } else {
-        setFormacaoTecnica('');
-        setGraduacao('');
-        setPosgraduacao('');
-        setFormacaoComplementar('');
-        setCargoDesejado('');
-        setNucleoDeTrabalho('');
-        setDataAdmissao('');
-      }
-    } catch (error) {
-      console.error('Erro ao buscar avaliação existente:', error);
-    }
+    // Limpar o estado da avaliação quando um novo pagamento for selecionado
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setFormacaoTecnica('');
+    setGraduacao('');
+    setPosgraduacao('');
+    setFormacaoComplementar('');
+    setCargoDesejado('');
+    setNucleoDeTrabalho('');
+    setDataAdmissao('');
   };
 
   const handleSubmit = async (e) => {
-    if (e) e.preventDefault(); // Certifique-se de que o evento é recebido
+    e.preventDefault();
+
     if (!selectedPagamento) {
       alert('Por favor, selecione um pagamento primeiro.');
       return;
     }
+
+    const userId = selectedPagamento.usuario;
+    const servicoId = selectedPagamento.servico.id;
+    const pagamentoId = selectedPagamento.id;
+
     try {
       if (avaliacao) {
+        // Atualizar avaliação existente
         await updateAvaliacao(avaliacao.id, {
-          servico: selectedPagamento.servico.id,
-          pagamento: selectedPagamento.id,
           formacao_tecnica: formacaoTecnica,
           graduacao: graduacao,
           posgraduacao: posgraduacao,
@@ -86,11 +70,13 @@ const Avaliacao = () => {
           cargo_desejado: cargoDesejado,
           nucleo_de_trabalho: nucleoDeTrabalho,
           data_admissao: dataAdmissao,
+          usuario: userId,
+          servico: servicoId,
+          pagamento: pagamentoId,
         });
       } else {
+        // Criar nova avaliação
         await createAvaliacao({
-          servico: selectedPagamento.servico.id,
-          pagamento: selectedPagamento.id,
           formacao_tecnica: formacaoTecnica,
           graduacao: graduacao,
           posgraduacao: posgraduacao,
@@ -98,24 +84,23 @@ const Avaliacao = () => {
           cargo_desejado: cargoDesejado,
           nucleo_de_trabalho: nucleoDeTrabalho,
           data_admissao: dataAdmissao,
+          usuario: userId,
+          servico: servicoId,
+          pagamento: pagamentoId,
         });
       }
-      // Limpar campos após envio
-      setFormacaoTecnica('');
-      setGraduacao('');
-      setPosgraduacao('');
-      setFormacaoComplementar('');
-      setCargoDesejado('');
-      setNucleoDeTrabalho('');
-      setDataAdmissao('');
+
+      resetForm();
       setSelectedPagamento(null);
       setAvaliacao(null);
+
+      // Recarregar pagamentos
       const data = await getPagamentosConcluidos();
       setPagamentos(data);
     } catch (error) {
       console.error('Erro ao enviar avaliação:', error);
     } finally {
-      setModalOpen(false); // Fecha o modal após o envio
+      setModalOpen(false);
     }
   };
 
@@ -124,18 +109,18 @@ const Avaliacao = () => {
       <h1>Avaliações</h1>
       <div className="table-responsive">
         <table className="table table-striped">
-          <thead className='tr-av'>
-            <tr >
+          <thead>
+            <tr>
               <th>Serviço</th>
               <th>Valor</th>
               <th>Ações</th>
             </tr>
           </thead>
-          <tbody className='tr-av' > 
+          <tbody>
             {pagamentos.length > 0 ? (
               pagamentos.map((pagamento) => (
                 <tr key={pagamento.id}>
-                  <td>{servicos[pagamento.servico] || 'Carregando...'}</td>
+                  <td>{pagamento.servico.nome || 'Carregando...'}</td>
                   <td>{pagamento.valor_liquido}</td>
                   <td>
                     <button
@@ -156,8 +141,7 @@ const Avaliacao = () => {
         </table>
       </div>
 
-      {/* Modal para Avaliação */}
-      {modalOpen && (
+      {modalOpen && selectedPagamento && (
         <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }} tabIndex="-1" role="dialog" aria-labelledby="avaliacaoModalLabel" aria-hidden="true">
           <div className="modal-dialog" role="document">
             <div className="modal-content">
@@ -168,7 +152,7 @@ const Avaliacao = () => {
                 </button>
               </div>
               <div className="modal-body">
-                <p><strong>Serviço:</strong> {servicos[selectedPagamento?.servico]}</p>
+                <p><strong>Serviço:</strong> {selectedPagamento.servico.nome}</p>
                 <form onSubmit={handleSubmit}>
                   <div className="form-group mt-3">
                     <label htmlFor="formacaoTecnica">Formação Técnica:</label>
@@ -198,10 +182,7 @@ const Avaliacao = () => {
                     <label htmlFor="dataAdmissao">Data de Admissão:</label>
                     <input type="date" className="form-control" value={dataAdmissao} onChange={(e) => setDataAdmissao(e.target.value)} />
                   </div>
-                  <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Fechar</button>
-                    <button type="submit" className="btn btn-primary">Enviar Avaliação</button>
-                  </div>
+                  <button type="submit" className="btn btn-success mt-3">Salvar Avaliação</button>
                 </form>
               </div>
             </div>
