@@ -176,11 +176,13 @@ export const getUserProfile = async () => {
 export const loginUser = async (email, password) => {
   try {
     const response = await axios.post('http://localhost:8000/api/login/', { email, password });
-    const { access, refresh, nome } = response.data; // A API deve retornar o nome do usuário
+    const { access, refresh, nome ,id } = response.data; // A API deve retornar o nome do usuário
     localStorage.setItem('token', access);
     localStorage.setItem('access', access); // Armazena o token de acesso no localStorage
     localStorage.setItem('refresh', refresh); // Armazena o token de atualização, se necessário
-    localStorage.setItem('nome_usuario', nome); // Armazena o nome do usuário
+    localStorage.setItem('nome_usuario', nome); 
+    localStorage.setItem('user_id', id); 
+    // Armazena o nome do usuário
     return response.data; // Retorna os dados da resposta
   } catch (error) {
     console.error('Erro ao fazer login:', error);
@@ -257,6 +259,7 @@ export const getAvaliacao = async (pagamentoId) => {
 // Função para criar uma avaliação
 export const createAvaliacao = async (avaliacaoData) => {
   try {
+    console.log('lajdlkasjdlaskjdas:', avaliacaoData)
     const response = await privateApi.post('/avaliacoes/', avaliacaoData);
     console.log('Avaliação criada:', response.data); // Log para verificar a criação da avaliação
     return response.data;
