@@ -92,26 +92,44 @@ const Avaliador = () => {
   }, [profissional, history]);
 
   const handleAvaliarClick = async (servico) => {
-    const postData = {
-      avaliacao_id: servico.id,
-      validade: "2024-12-31",
-      responsavel: profissional.user_id,
-      data_resultado: "2024-12-31"
-    };
-
     try {
-      await api.post('resultados/', postData, {
+      // Verifica se já existe um resultado para essa avaliação
+      const existingResult = await api.get(`resultados/?avaliacao_id=${servico.id}`, {
         headers: {
           Authorization: `Bearer ${profissional.token}`
         }
       });
-      alert('Avaliação enviada com sucesso!');
-      history.push('/avaliacao-resultado');
+  
+      const resultExists = existingResult.data.some(result => result.avaliacao_id === servico.id);
+  
+      if (resultExists) {
+        // Se já existe um resultado, redireciona para a página de avaliação com o ID da avaliação
+        alert('avalicao já existente, redirecionando...');
+        history.push(`/avaliacao-resultado/${servico.id}`);
+      } else {
+        // Caso contrário, cria um novo resultado
+        const postData = {
+          avaliacao_id: servico.id,
+          validade: "2024-12-31",
+          responsavel: profissional.user_id,
+          data_resultado: "2024-12-31"
+        };
+  
+        await api.post('resultados/', postData, {
+          headers: {
+            Authorization: `Bearer ${profissional.token}`
+          }
+        });
+        alert('Avaliação enviada com sucesso!');
+        history.push(`/avaliacao-resultado/${servico.id}`);
+      }
     } catch (error) {
-      console.error('Erro ao enviar avaliação:', error.response?.data || error.message);
+      console.error('Erro ao verificar/enviar avaliação:', error.response?.data || error.message);
       alert('Erro ao enviar a avaliação. Tente novamente.');
     }
   };
+  
+  
 
   return (
     <div>

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom'; // Importando useHistory
 import { getPagamentosConcluidos, getAvaliacao, createAvaliacao, updateAvaliacao } from './api';
 import './Avaliacao.css';
 
 const Avaliacao = () => {
+  const history = useHistory(); // Instanciando history
   const [pagamentos, setPagamentos] = useState([]);
   const [selectedPagamento, setSelectedPagamento] = useState(null);
   const [avaliacao, setAvaliacao] = useState(null);
@@ -19,7 +21,6 @@ const Avaliacao = () => {
     const fetchPagamentos = async () => {
       try {
         const data = await getPagamentosConcluidos();
-        console.log('Pagamentos:', data);
         setPagamentos(data);
       } catch (error) {
         console.error('Erro ao buscar pagamentos:', error);
@@ -29,12 +30,29 @@ const Avaliacao = () => {
     fetchPagamentos();
   }, []);
 
-  const handlePagamentoSelect = (pagamento) => {
+  const handlePagamentoSelect = async (pagamento) => {
     setSelectedPagamento(pagamento);
     setModalOpen(true);
 
-    // Limpar o estado da avaliação quando um novo pagamento for selecionado
-    resetForm();
+    try {
+      const avaliacaoExistente = await getAvaliacao(pagamento.id);
+      console.log('ava', avaliacaoExistente);
+      if (avaliacaoExistente) {
+        setAvaliacao(avaliacaoExistente);
+        setFormacaoTecnica(avaliacaoExistente.formacao_tecnica);
+        setGraduacao(avaliacaoExistente.graduacao);
+        setPosgraduacao(avaliacaoExistente.posgraduacao);
+        setFormacaoComplementar(avaliacaoExistente.formacao_complementar);
+        setCargoDesejado(avaliacaoExistente.cargo_desejado);
+        setNucleoDeTrabalho(avaliacaoExistente.nucleo_de_trabalho);
+        setDataAdmissao(avaliacaoExistente.data_admissao);
+      } else {
+        resetForm();
+      }
+    } catch (error) {
+      console.error('Erro ao buscar avaliação:', error);
+      resetForm();
+    }
   };
 
   const resetForm = () => {
@@ -45,6 +63,7 @@ const Avaliacao = () => {
     setCargoDesejado('');
     setNucleoDeTrabalho('');
     setDataAdmissao('');
+    setAvaliacao(null);
   };
 
   const handleSubmit = async (e) => {
@@ -61,7 +80,6 @@ const Avaliacao = () => {
 
     try {
       if (avaliacao) {
-        // Atualizar avaliação existente
         await updateAvaliacao(avaliacao.id, {
           formacao_tecnica: formacaoTecnica,
           graduacao: graduacao,
@@ -75,7 +93,6 @@ const Avaliacao = () => {
           pagamento: pagamentoId,
         });
       } else {
-        // Criar nova avaliação
         await createAvaliacao({
           formacao_tecnica: formacaoTecnica,
           graduacao: graduacao,
@@ -92,15 +109,20 @@ const Avaliacao = () => {
 
       resetForm();
       setSelectedPagamento(null);
-      setAvaliacao(null);
 
-      // Recarregar pagamentos
       const data = await getPagamentosConcluidos();
       setPagamentos(data);
     } catch (error) {
       console.error('Erro ao enviar avaliação:', error);
     } finally {
       setModalOpen(false);
+    }
+  };
+
+  // Função para redirecionar para a página de avaliações realizadas
+  const handleVerAvaliacoes = () => {
+    if (selectedPagamento) {
+      history.push(`/avaliacoes/${selectedPagamento.usuario}`); // Substitua pelo caminho correto
     }
   };
 
@@ -189,6 +211,11 @@ const Avaliacao = () => {
           </div>
         </div>
       )}
+
+      {/* Botão para ver avaliações realizadas */}
+      <button className="btn btn-secondary mt-4" onClick={handleVerAvaliacoes}>
+        Ver Avaliações Realizadas
+      </button>
     </div>
   );
 };
