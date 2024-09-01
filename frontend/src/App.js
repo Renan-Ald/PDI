@@ -1,4 +1,3 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Home from './Home';
@@ -10,9 +9,11 @@ import { AuthProvider } from './AuthContext';
 import Profile from './Profile';
 import Avaliacao from './Avaliacao';
 import LoginProfissional from './LoginProfissional';
-import AvaliadorArea from './AvaliadorArea'; 
+import AvaliadorArea from './AvaliadorArea';
 import Footer from './Footer';
 import AvaliacaoResultado from './AvaliacaoResultado';
+import AvaliacaoView from './Avaliacao-view';
+
 function App() {
   const isProfissionalAuthenticated = () => {
     return !!localStorage.getItem('profissionalToken');
@@ -33,8 +34,9 @@ function App() {
           <Route path="/avaliador">
             {isProfissionalAuthenticated() ? <AvaliadorArea /> : <Redirect to="/avaliador/login" />}
           </Route>
-           <Route path="/avaliador/avaliacao-resultado/:id" component={AvaliacaoResultado}/>
-          
+          <Route path="/avaliacao-resultado/:id" component={AvaliacaoResultado} />
+          <Route path="/avaliacao-view/:id" component={AvaliacaoView} />
+          {/* <Redirect to="/" /> Redireciona para a Home se a rota não for encontrada */}
         </Switch>
         <Footer />
       </Router>

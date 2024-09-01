@@ -39,7 +39,7 @@ const Register = () => {
       />
       <h2 className="mb-4">Registro</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className=" registro form-group">
           <label>Email:</label>
           <input
             type="email"

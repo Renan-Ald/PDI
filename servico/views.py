@@ -319,6 +319,13 @@ class AvaliacoesPendentesView(APIView):
 class AvaliacaoViewSet(viewsets.ModelViewSet):
     queryset = Avaliacao.objects.all()
     serializer_class = AvaliacaoSerializer
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        pagamento_id = self.request.query_params.get('pagamento_id', None)
+        if pagamento_id is not None:
+            queryset = queryset.filter(pagamento_id=pagamento_id)
+        return queryset
 
 class ResultadoViewSet(viewsets.ModelViewSet):
     queryset = Resultado.objects.all()
@@ -328,6 +335,19 @@ class BlocoViewSet(viewsets.ModelViewSet):
     queryset = Bloco.objects.all()
     serializer_class = BlocoSerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        resultado_id = self.request.query_params.get('resultado_id', None)
+        if resultado_id is not None:
+            queryset = queryset.filter(resultado_id=resultado_id)
+        return queryset
 class TarefaViewSet(viewsets.ModelViewSet):
     queryset = Tarefa.objects.all()
     serializer_class = TarefaSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        bloco_id = self.request.query_params.get('bloco_id', None)
+        if bloco_id is not None:
+            queryset = queryset.filter(bloco_id=bloco_id)
+        return queryset

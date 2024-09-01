@@ -14,12 +14,6 @@ const AvaliacaoResultado = () => {
   const history = useHistory();
 
   useEffect(() => {
-    if (!profissional.token) {
-      alert('Acesso negado. Esta área é restrita a profissionais.');
-      history.push('/avaliador/login');
-      return;
-    }
-
     const fetchResultado = async () => {
       try {
         const response = await api.get(`resultados/?avaliacao_id=${id}`, {
@@ -194,19 +188,6 @@ const AvaliacaoResultado = () => {
   return (
     <div className='av-result'>
     <div className="container">
-      <h1 className="mt-4">Avaliação</h1>
-      
-      {avaliacaoDetalhes && (
-        <div className="card mb-4">
-          <div className="card-body">
-            <h2>Detalhes da Avaliação</h2>
-            <p><strong>Formação Técnica:</strong> {avaliacaoDetalhes.formacao_tecnica}</p>
-            <p><strong>Graduação:</strong> {avaliacaoDetalhes.graduacao}</p>
-            <p><strong>Data de Admissão:</strong> {avaliacaoDetalhes.data_admissao}</p>
-          </div>
-        </div>
-      )}
-
       <h2>Blocos e Tarefas</h2>
       {blocos.map((bloco, index) => (
         <div className="card mb-3" key={index}>
@@ -244,12 +225,10 @@ const AvaliacaoResultado = () => {
                 />
               </div>
             ))}
-            <button className="btn btn-primary" onClick={() => handleAddTarefa(index)}>Adicionar Tarefa</button>
+           
           </div>
         </div>
       ))}
-      <button className="btn btn-success" onClick={handleAddBloco}>Adicionar Bloco</button>
-      <button className="btn btn-primary mt-3" onClick={handleSave}>Salvar</button>
     </div>
     </div>
   );

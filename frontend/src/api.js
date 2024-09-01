@@ -246,13 +246,10 @@ export const updateAvaliacao = async (avaliacaoId, avaliacaoData) => {
 
 // Função para obter avaliação
 export const getAvaliacao = async (pagamentoId) => {
-  try {
-    const response = await privateApi.get(`avaliacoes/?pagamento_id=${pagamentoId}`);
-    return response.data[0] || null; // a resposta seja uma lista de avaliações
-  } catch (error) {
-    console.error('Erro ao buscar avaliação existente:', error);
-    throw error;
-  }
+  console.log('pag:',pagamentoId)
+  const response = await privateApi.get(`/avaliacoes/?pagamento_id=${pagamentoId}`);
+  console.log(response)
+  return await response.data[0];
 };
 
 
