@@ -330,7 +330,12 @@ class AvaliacaoViewSet(viewsets.ModelViewSet):
 class ResultadoViewSet(viewsets.ModelViewSet):
     queryset = Resultado.objects.all()
     serializer_class = ResultadoSerializer
-
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        avaliacao_id = self.request.query_params.get('avaliacao_id', None)
+        if avaliacao_id is not None:
+            queryset = queryset.filter(avaliacao_id=avaliacao_id)
+        return queryset
 class BlocoViewSet(viewsets.ModelViewSet):
     queryset = Bloco.objects.all()
     serializer_class = BlocoSerializer
