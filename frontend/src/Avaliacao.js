@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom'; // Importando useHistory
+import { useHistory } from 'react-router-dom';
 import { getPagamentosConcluidos, getAvaliacao, createAvaliacao, updateAvaliacao } from './api';
 import './Avaliacao.css';
 
 const Avaliacao = () => {
-  const history = useHistory(); // Instanciando history
+  const history = useHistory();
   const [pagamentos, setPagamentos] = useState([]);
+  const [avaliacoes, setAvaliacoes] = useState({});
   const [selectedPagamento, setSelectedPagamento] = useState(null);
-  const [avaliacao, setAvaliacao] = useState(null);
   const [formacaoTecnica, setFormacaoTecnica] = useState('');
   const [graduacao, setGraduacao] = useState('');
   const [posgraduacao, setPosgraduacao] = useState('');
@@ -16,14 +16,22 @@ const Avaliacao = () => {
   const [nucleoDeTrabalho, setNucleoDeTrabalho] = useState('');
   const [dataAdmissao, setDataAdmissao] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [avaliacao, setAvaliacao] = useState(null);
 
   useEffect(() => {
     const fetchPagamentos = async () => {
       try {
-        const data = await getPagamentosConcluidos();
-        setPagamentos(data);
+        const pagamentosData = await getPagamentosConcluidos();
+        setPagamentos(pagamentosData);
+
+        const avaliacoesData = {};
+        for (let pagamento of pagamentosData) {
+          const avaliacao = await getAvaliacao(pagamento.id);
+          avaliacoesData[pagamento.id] = avaliacao;
+        }
+        setAvaliacoes(avaliacoesData);
       } catch (error) {
-        console.error('Erro ao buscar pagamentos:', error);
+        console.error('Erro ao buscar pagamentos ou avaliações:', error);
       }
     };
 
@@ -34,23 +42,17 @@ const Avaliacao = () => {
     setSelectedPagamento(pagamento);
     setModalOpen(true);
 
-    try {
-      const avaliacaoExistente = await getAvaliacao(pagamento.id);
-      console.log('ava', avaliacaoExistente);
-      if (avaliacaoExistente) {
-        setAvaliacao(avaliacaoExistente);
-        setFormacaoTecnica(avaliacaoExistente.formacao_tecnica);
-        setGraduacao(avaliacaoExistente.graduacao);
-        setPosgraduacao(avaliacaoExistente.posgraduacao);
-        setFormacaoComplementar(avaliacaoExistente.formacao_complementar);
-        setCargoDesejado(avaliacaoExistente.cargo_desejado);
-        setNucleoDeTrabalho(avaliacaoExistente.nucleo_de_trabalho);
-        setDataAdmissao(avaliacaoExistente.data_admissao);
-      } else {
-        resetForm();
-      }
-    } catch (error) {
-      console.error('Erro ao buscar avaliação:', error);
+    const avaliacaoExistente = avaliacoes[pagamento.id];
+    if (avaliacaoExistente) {
+      setAvaliacao(avaliacaoExistente);
+      setFormacaoTecnica(avaliacaoExistente.formacao_tecnica);
+      setGraduacao(avaliacaoExistente.graduacao);
+      setPosgraduacao(avaliacaoExistente.posgraduacao);
+      setFormacaoComplementar(avaliacaoExistente.formacao_complementar);
+      setCargoDesejado(avaliacaoExistente.cargo_desejado);
+      setNucleoDeTrabalho(avaliacaoExistente.nucleo_de_trabalho);
+      setDataAdmissao(avaliacaoExistente.data_admissao);
+    } else {
       resetForm();
     }
   };
@@ -110,8 +112,15 @@ const Avaliacao = () => {
       resetForm();
       setSelectedPagamento(null);
 
-      const data = await getPagamentosConcluidos();
-      setPagamentos(data);
+      const pagamentosData = await getPagamentosConcluidos();
+      setPagamentos(pagamentosData);
+
+      const avaliacoesData = {};
+      for (let pagamento of pagamentosData) {
+        const avaliacao = await getAvaliacao(pagamento.id);
+        avaliacoesData[pagamento.id] = avaliacao;
+      }
+      setAvaliacoes(avaliacoesData);
     } catch (error) {
       console.error('Erro ao enviar avaliação:', error);
     } finally {
@@ -119,10 +128,9 @@ const Avaliacao = () => {
     }
   };
 
-  // Função para redirecionar para a página de avaliações realizadas
-  const handleVerAvaliacoes = () => {
-    if (selectedPagamento) {
-      history.push(`/avaliacoes/${selectedPagamento.usuario}`); // Substitua pelo caminho correto
+  const handleVerAvaliacoes = (avaliacaoId) => {
+    if (avaliacaoId) {
+      history.push(`/avaliacao-view/${avaliacaoId}`);
     }
   };
 
@@ -135,7 +143,8 @@ const Avaliacao = () => {
             <tr>
               <th>Serviço</th>
               <th>Valor</th>
-              <th>Ações</th>
+              <th>Avaliar</th>
+              <th>Ver Avaliação</th>
             </tr>
           </thead>
           <tbody>
@@ -152,11 +161,20 @@ const Avaliacao = () => {
                       Avaliar
                     </button>
                   </td>
+                  <td>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => handleVerAvaliacoes(avaliacoes[pagamento.id]?.id)}
+                      disabled={!avaliacoes[pagamento.id]}
+                    >
+                      Ver Avaliação
+                    </button>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="3" className="text-center">Nenhum pagamento concluído encontrado.</td>
+                <td colSpan="4" className="text-center">Nenhum pagamento concluído encontrado.</td>
               </tr>
             )}
           </tbody>
@@ -204,18 +222,16 @@ const Avaliacao = () => {
                     <label htmlFor="dataAdmissao">Data de Admissão:</label>
                     <input type="date" className="form-control" value={dataAdmissao} onChange={(e) => setDataAdmissao(e.target.value)} />
                   </div>
-                  <button type="submit" className="btn btn-success mt-3">Salvar Avaliação</button>
+                  <div className="modal-footer">
+                    <button type="submit" className="btn btn-success">Salvar Avaliação</button>
+                    <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancelar</button>
+                  </div>
                 </form>
               </div>
             </div>
           </div>
         </div>
       )}
-
-      {/* Botão para ver avaliações realizadas */}
-      <button className="btn btn-secondary mt-4" onClick={handleVerAvaliacoes}>
-        Ver Avaliações Realizadas
-      </button>
     </div>
   );
 };

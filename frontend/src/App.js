@@ -12,7 +12,7 @@ import LoginProfissional from './LoginProfissional';
 import AvaliadorArea from './AvaliadorArea';
 import Footer from './Footer';
 import AvaliacaoResultado from './AvaliacaoResultado';
-import AvaliacaoView from './Avaliacao-view';
+import AvaliacaoView from './AvaliacaoView';
 
 function App() {
   const isProfissionalAuthenticated = () => {
