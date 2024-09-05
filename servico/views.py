@@ -17,7 +17,42 @@ import json
 from .serializers import ServicoSerializer, PedidoSerializer, DetalhePedidoSerializer, PagamentoSerializer, ItemCarrinhoSerializer, CustomUserSerializer, AvaliacaoSerializer,ResultadoSerializer,TarefaSerializer,BlocoSerializer
 from .models import Servico, Pedido, DetalhePedido, Pagamento, ItemCarrinho, Avaliacao,Transacao,Profissional,CustomUser,Resultado,Bloco,Tarefa
 
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.forms import PasswordResetForm
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.urls import reverse
+from django.core.mail import send_mail
+from django.conf import settings
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.http import JsonResponse
+from django.contrib.auth.views import PasswordResetConfirmView
+from django.urls import reverse_lazy
+
+
 User = get_user_model()
+@csrf_exempt
+def password_reset_request(request):
+    if request.method == "POST":
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            # Enviar o e-mail para redefinição de senha
+            form.save(request=request)
+            return render(request, "registration/password_reset_done.html")  # Use apenas o nome do template
+    else:
+        form = PasswordResetForm()
+    return render(request, "registration/password_reset.html", {"password_reset_form": form})  # Aqui também
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'servico/templates/registration/password_reset_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Sua senha foi redefinida com sucesso.')
+        return super().form_valid(form)
+    
 
 @csrf_exempt
 def register(request):

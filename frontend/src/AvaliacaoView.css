@@ -1,0 +1,63 @@
+/* CSS exclusivo para AvaliacaoView */
+.avaliacao-view {
+  background-color: white;
+  color: black;
+  font-family: 'Arial', sans-serif; /* Você pode trocar por uma fonte mais bonita como 'Roboto' ou 'Open Sans' */
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.avaliacao-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.avaliacao-title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.avaliacao-card {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.avaliacao-bloco-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.avaliacao-tarefas {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.avaliacao-tarefa-item {
+  background-color: #f9f9f9;
+  border: none;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.avaliacao-tarefa-item h5 {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.avaliacao-view-loading,
+.avaliacao-view-error {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 20px;
+}
+
+.ava-view{
+  background-color: white;
+}
+.li-view{
+  color: black;
+  font-family: 'Arial', sans-serif;
+}

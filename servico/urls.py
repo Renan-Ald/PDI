@@ -3,6 +3,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter    
 from .views import register, login_view, ServicoListView, ServicoDetailView, PedidoViewSet, DetalhePedidoViewSet,PagamentoViewSet,finalizar_checkout,webhook_pagamento,ItemCarrinhoViewSet,user_profile,AvaliacaoViewSet,pagamentos_concluidos,AvaliacoesPendentesView,get_usuario,ResultadoViewSet,TarefaViewSet,BlocoViewSet
 from . import views
+from .views import password_reset_request, CustomPasswordResetConfirmView
+from django.contrib.auth import views as auth_views
 
 
 router = DefaultRouter()
@@ -29,4 +31,7 @@ urlpatterns = [
     path('avaliador/login/', views.profissional_login_view, name='profissional-login'),
     path('avaliacoes-pendentes/', AvaliacoesPendentesView.as_view(), name='avaliacoes-pendentes'),
     path('usuarios/<int:id>/', get_usuario, name='get_usuario'),
+    path('esqueceu-sua-senha/', password_reset_request, name='password_reset'),
+    path('reset/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('senha-resetada/', auth_views.PasswordResetCompleteView.as_view(template_name='usuario/password_reset_complete.html'), name='password_reset_complete'),
 ]
