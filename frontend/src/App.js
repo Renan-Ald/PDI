@@ -13,6 +13,8 @@ import AvaliadorArea from './AvaliadorArea';
 import Footer from './Footer';
 import AvaliacaoResultado from './AvaliacaoResultado';
 import AvaliacaoView from './AvaliacaoView';
+import ForgotPassword from './ForgotPassword';
+import ResetPassword from './ResetPassword';
 
 function App() {
   const isProfissionalAuthenticated = () => {
@@ -31,6 +33,8 @@ function App() {
           <Route path="/perfil" component={Profile} />
           <Route path="/avaliacoes" component={Avaliacao} />
           <Route path="/avaliador/login" component={LoginProfissional} />
+          <Route path="/forgot-password" component={ForgotPassword} />
+          <Route path="/reset/:uid/:token" component={ResetPassword} />
           <Route path="/avaliador">
             {isProfissionalAuthenticated() ? <AvaliadorArea /> : <Redirect to="/avaliador/login" />}
           </Route>

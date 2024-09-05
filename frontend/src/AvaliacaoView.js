@@ -1,17 +1,16 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import api from './api';
 import AuthContext from './AuthContext';
-import './AvaliacaoResultado.css';
-const AvaliacaoResultado = () => {
+import './AvaliacaoView.css';
+
+const AvaliacaoView = () => {
   const { id } = useParams();
   const { profissional } = useContext(AuthContext);
   const [resultado, setResultado] = useState(null);
-  const [avaliacaoDetalhes, setAvaliacaoDetalhes] = useState(null);
+  const [blocos, setBlocos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [blocos, setBlocos] = useState([]);
-  const history = useHistory();
 
   useEffect(() => {
     const fetchResultado = async () => {
@@ -26,7 +25,6 @@ const AvaliacaoResultado = () => {
 
         if (resultadoFiltrado) {
           setResultado(resultadoFiltrado);
-          fetchAvaliacaoDetalhes(resultadoFiltrado.avaliacao_id);
           fetchBlocos(resultadoFiltrado.idresultado);
         } else {
           setError('Nenhum resultado encontrado para esta avaliação.');
@@ -36,20 +34,6 @@ const AvaliacaoResultado = () => {
         setError('Não foi possível carregar o resultado.');
       } finally {
         setLoading(false);
-      }
-    };
-
-    const fetchAvaliacaoDetalhes = async (avaliacaoId) => {
-      try {
-        const response = await api.get(`avaliacoes/${avaliacaoId}`, {
-          headers: {
-            Authorization: `Bearer ${profissional.token}`,
-          },
-        });
-        setAvaliacaoDetalhes(response.data);
-      } catch (error) {
-        console.error('Erro ao buscar detalhes da avaliação:', error);
-        setError('Não foi possível carregar os detalhes da avaliação.');
       }
     };
 
@@ -81,157 +65,41 @@ const AvaliacaoResultado = () => {
     };
 
     fetchResultado();
-  }, [id, profissional.token, history]);
-
-  const handleAddBloco = () => {
-    const novoBloco = {
-      descricao: `Bloco ${blocos.length + 1}`,
-      tarefas: [],
-    };
-    setBlocos([...blocos, novoBloco]);
-  };
-
-  const handleAddTarefa = (index) => {
-    const novaTarefa = {
-      tarefa: '',
-      prazo_registro: '',
-      descricao: '',
-      aprendizado: '',
-    };
-    const novosBlocos = [...blocos];
-    novosBlocos[index].tarefas.push(novaTarefa);
-    setBlocos(novosBlocos);
-  };
-
-  const handleChangeTarefa = (blocoIndex, tarefaIndex, field, value) => {
-    const novosBlocos = [...blocos];
-
-    if (field === 'prazo_registro') {
-      const date = new Date(value);
-      if (!isNaN(date)) {
-        date.setHours(9, 0, 0);
-        novosBlocos[blocoIndex].tarefas[tarefaIndex][field] = date.toISOString();
-      } else {
-        novosBlocos[blocoIndex].tarefas[tarefaIndex][field] = '';
-      }
-    } else {
-      novosBlocos[blocoIndex].tarefas[tarefaIndex][field] = value;
-    }
-    setBlocos(novosBlocos);
-  };
-
-  const handleSubmitBloco = async (bloco, resultadoId) => {
-    try {
-      const response = await api.post('blocos/', {
-        descricao: bloco.descricao,
-        resultado_id: resultadoId,
-      }, {
-        headers: {
-          Authorization: `Bearer ${profissional.token}`,
-        },
-      });
-      if (response.data && response.data.idbloco) {
-        return response.data.idbloco;
-      } else {
-        throw new Error('ID do bloco não encontrado na resposta.');
-      }
-    } catch (error) {
-      console.error('Erro ao criar bloco:', error);
-      return null;
-    }
-  };
-
-  const handleSubmitTarefa = async (tarefa, blocoId) => {
-    try {
-      if (!tarefa.tarefa || !tarefa.prazo_registro || !tarefa.aprendizado) {
-        throw new Error('Todos os campos obrigatórios devem ser preenchidos.');
-      }
-      const response = await api.post('tarefas/', {
-        tarefa: tarefa.tarefa,
-        prazo_registro: tarefa.prazo_registro,
-        descricao: tarefa.descricao,
-        aprendizado: tarefa.aprendizado,
-        bloco_id: blocoId,
-      }, {
-        headers: {
-          Authorization: `Bearer ${profissional.token}`,
-        },
-      });
-
-      console.log('Tarefa criada:', response.data);
-    } catch (error) {
-      console.error('Erro ao criar tarefa:', error);
-    }
-  };
-
-  const handleSave = async () => {
-    for (let i = 0; i < blocos.length; i++) {
-      const blocoId = await handleSubmitBloco(blocos[i], resultado.idresultado);
-      if (!blocoId) {
-        console.error('Erro ao criar bloco, interrompendo a criação de tarefas.');
-        return;
-      }
-      for (let j = 0; j < blocos[i].tarefas.length; j++) {
-        await handleSubmitTarefa(blocos[i].tarefas[j], blocoId);
-      }
-    }
-  };
+  }, [id, profissional.token]);
 
   if (loading) {
-    return <p>Carregando...</p>;
+    return <p className="avaliacao-view-loading">Carregando...</p>;
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return <p className="avaliacao-view-error">{error}</p>;
   }
 
   return (
-    <div className='av-result'>
-    <div className="container">
-      <h2>Blocos e Tarefas</h2>
-      {blocos.map((bloco, index) => (
-        <div className="card mb-3" key={index}>
-          <div className="card-body">
-            <h3>{bloco.descricao}</h3>
-            {bloco.tarefas.map((tarefa, tarefaIndex) => (
-              <div className="mb-3" key={tarefaIndex}>
-                <input
-                  type="text"
-                  className=" registro form-control mb-2"
-                  placeholder="Tarefa"
-                  value={tarefa.tarefa}
-                  onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'tarefa', e.target.value)}
-                />
-                <input
-                  type="date"
-                  className="form-control mb-2"
-                  placeholder="Prazo"
-                  value={tarefa.prazo_registro ? tarefa.prazo_registro.slice(0, 10) : ''}
-                  onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'prazo_registro', e.target.value)}
-                />
-                  <textarea
-                    className="form-control mb-2"
-                    placeholder="Descrição"
-                    value={tarefa.descricao}
-                    onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'descricao', e.target.value)}
-                    rows={4} // Ajuste o número de linhas conforme necessário
-                  ></textarea>
-                <input
-                  type="text"
-                  className="form-control mb-2"
-                  placeholder="Aprendizado"
-                  value={tarefa.aprendizado}
-                  onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'aprendizado', e.target.value)}
-                />
-              </div>
-            ))}
-           
+    <div className="avaliacao-view">
+      <div className="avaliacao-container mt-5">
+        <h2 className="avaliacao-title text-center mb-4">Visualização da Avaliação</h2>
+
+        {blocos.map((bloco, index) => (
+          <div className="avaliacao-card card mb-4 shadow-sm" key={index}>
+            <div className="ava-view card-body">
+              <h3 className="avaliacao-bloco-title card-title">{bloco.descricao}</h3>
+              <ul className=" li-view avaliacao-tarefas list-group list-group-flush">
+                {bloco.tarefas.map((tarefa, tarefaIndex) => (
+                  <li className=" li-view avaliacao-tarefa-item" key={tarefaIndex}>
+                    <h5>{tarefa.tarefa}</h5>
+                    <p><strong>Prazo:</strong> {new Date(tarefa.prazo_registro).toLocaleDateString()}</p>
+                    <p><strong>Descrição:</strong> {tarefa.descricao}</p>
+                    <p><strong>Aprendizado:</strong> {tarefa.aprendizado}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default AvaliacaoResultado;
+export default AvaliacaoView;
