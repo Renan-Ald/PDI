@@ -1,7 +1,7 @@
 
 /* Seção Hero */
 .hero {
-  background-color: #333; /* Fundo escuro */
+  background-color: #fff; /* Fundo escuro */
   color: #FFFFFF; /* Texto branco */
   padding: 70px 0; /* Padding superior e inferior */
 }
@@ -19,10 +19,10 @@
 }
 
 .hero-title {
-  background: linear-gradient(to right, #2390cf, #fafbfc); /* Gradiente de cor */
+  background: linear-gradient(to right, #c7a865, #fafbfc); /* Gradiente de cor */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   margin-bottom: 20px;
   font-weight: bold;
 }
@@ -78,37 +78,48 @@
     text-decoration: none;
     border-radius: 30px !important; /* Borda arredondada */
     color: #FFFFFF; /* Cor do texto */
-    background: linear-gradient(135deg, #00BFFF, #1E90FF); /* Gradiente azul claro */
+    background: linear-gradient(135deg, #291945, #5e163b); /* Gradiente azul claro */
     transition: background 0.3s ease; /* Transição suave para mudança de cor */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para efeito de profundidade */
     position: relative;
     overflow: hidden;
 }
+/* Animação de pulsação */
+.btn-pulse {
+  animation: pulse 1.5s infinite; /* Loop infinito */
+}
 
-.home-page .btn-pulse {
-    animation: pulse 1.5s infinite; /* Animação de pulsação contínua */
+
+/* Definição da animação pulse */
+@-webkit-keyframes pulse {
+0% {
+  -webkit-box-shadow: 0 0 0 0 rgba(206, 165, 17, 0.4);
+}
+70% {
+  -webkit-box-shadow: 0 0 0 10px rgba(204,169,44, 0);
+}
+100% {
+  -webkit-box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+}
 }
 
 @keyframes pulse {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.05);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
+0% {
+  box-shadow: 0 0 0 0 rgba(206, 165, 17, 0.4);
+}
+70% {
+  box-shadow: 0 0 0 10px rgba(204,169,44, 0);
+}
+100% {
+  box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+}
 }
 
 /* fim botao */
 /* body em todas as paginas */
 body {
-  background-color: #333 !important; /* Fundo escuro */
-  color: #FFFFFF !important; /* Texto branco */
+  background-color: #fff !important; /* Fundo escuro */
+  color: #1b1626 !important; /* Texto branco */
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
@@ -167,7 +178,7 @@ section {
   background-color: #1E90FF; /* Azul escuro */
   color: #FFFFFF;
   border: none;
-  padding: 10px 20px;
+  padding: 40px 60px;
   border-radius: 5px;
   cursor: pointer;
   text-align: center;
@@ -176,16 +187,17 @@ section {
 }
 
 .btn-primary {
-  background-color: #1E90FF;
+  background-color: #562968 !important;
+  border-color: #562968 !important;
 }
 
 .btn-primary:hover {
-  background-color: #00BFFF; /* Azul claro ao passar o mouse */
+  background-color: #5e163b; /* Azul claro ao passar o mouse */
 }
 
 .btn-cart, .btn-wishlist {
   background-color: transparent;
-  border: 1px solid #1E90FF;
+  border: 1px solid #562968;
   color: #1E90FF;
 }
 
@@ -198,7 +210,7 @@ section {
 /* Estilo da seção de produtos */
 .section-products {
   padding: 50px 0;
-  background-color: #333; /* Cor de fundo da seção */
+  background-color: #fff; /* Cor de fundo da seção */
 }
 
 .container {
@@ -214,7 +226,7 @@ section {
 
 .section-header h1 {
   font-size: 2.5rem;
-  color: #fff;
+  color: #1b1626;
 }
 
 /* Lista de produtos */
@@ -227,7 +239,7 @@ section {
 
 /* Card de produto */
 .product-card {
-  background-color: #53b4d9; /* Azul claro */
+  background-color: #291945; /* Azul claro */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   overflow: hidden;
@@ -257,7 +269,7 @@ section {
 
 .product-title {
   font-size: 1.5rem; /* Tamanho do título */
-  color: #fff; /* Cor do texto */
+  color: wheat; /* Cor do texto */
   margin-bottom: 30px;
 }
 
@@ -301,7 +313,7 @@ section {
 
 /* fim produto */
 .txt_gradiente {
-  background: linear-gradient(135deg, #2390cf, #fafbfc); /* Gradiente de cor */
+  background: linear-gradient(135deg, #c7a865, #562968); /* Gradiente de cor */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 1.5rem; /* Tamanho da fonte */
@@ -309,7 +321,7 @@ section {
 }
 /* Seções de Texto */
 #validation, #manager, #marketer {
-  background-color: #333;
+  background-color: #fff;
 }
 
 .validation-content, .manager-content, .marketer-content {
@@ -322,11 +334,11 @@ section {
 }
 
 .validation-text h5, .manager-text h5, .marketer-text h5 {
-  color: #FFFFFF;
+  color: #1c141a;
 }
 
 .validation-text h2, .manager-text h2, .marketer-text h2 {
-  color: #FFFFFF;
+  color: #1c141a;
 }
 
 .validation-text p, .manager-text p, .marketer-text p {
@@ -334,7 +346,7 @@ section {
 }
 
 .benefits {
-  background-color: #333;
+  background-color: #fff;
   padding: 40px 0;
   color: #FFFFFF;
 }
@@ -353,7 +365,7 @@ section {
 
 .benefit p {
   margin: 0;
-  color: #FFFFFF;
+  color: #1c141a;
   font-size: 1rem;
 }
 

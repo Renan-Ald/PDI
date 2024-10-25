@@ -135,6 +135,7 @@ const Avaliacao = () => {
   };
 
   return (
+    <section className='vh-100'>
     <div className="container mt-5">
       <h1>Avaliações</h1>
       <div className="table-responsive">
@@ -180,7 +181,7 @@ const Avaliacao = () => {
           </tbody>
         </table>
       </div>
-
+          
       {modalOpen && selectedPagamento && (
         <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }} tabIndex="-1" role="dialog" aria-labelledby="avaliacaoModalLabel" aria-hidden="true">
           <div className="modal-dialog" role="document">
@@ -233,6 +234,7 @@ const Avaliacao = () => {
         </div>
       )}
     </div>
+    </section>
   );
 };
 

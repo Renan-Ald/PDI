@@ -3,41 +3,41 @@
 /* Estilo para os links da navbar e dropdown */
 .navbar-nav .nav-link:hover,
 .navbar-nav .dropdown-item:hover {
-  background-color: #333; /* Cor de fundo ao passar o mouse */
-  color: #fff; /* Cor do texto ao passar o mouse */
+  background-color: whitesmoke !important; /* Cor de fundo ao passar o mouse */
+  color: #1b1626; /* Cor do texto ao passar o mouse */
 }
 
 /* Estilo para o fundo do dropdown */
 .navbar-nav .dropdown-menu {
-  background-color: #333; /* Cor de fundo do dropdown */
-  border-color: #333; /* Cor da borda do dropdown */
+  background-color: #fff; /* Cor de fundo do dropdown */
+  border-color: #fff; /* Cor da borda do dropdown */
 }
 
 /* Estilo para os itens do dropdown */
 .navbar-nav .dropdown-item {
-  color: #fff; /* Cor do texto dos itens do dropdown */
+  color: #1b1626; /* Cor do texto dos itens do dropdown */
 }
 
 
 /* Ícone no link do dropdown */
 .navbar-nav .nav-link i {
-  color: #fff; /* Cor do ícone */
+  color: #1b1626; /* Cor do ícone */
 }
 
 /* Adicionar estilo ao passar o mouse sobre o dropdown */
 .navbar-nav .dropdown-item:hover {
   background-color: #2c2c2c; /* Um tom mais claro para o hover */
-  color: #fff; /* Cor do texto ao passar o mouse */
+  color: #1b1626; /* Cor do texto ao passar o mouse */
 }
 /* Header.css */
 
 /* Estilos para a navbar */
 .navbar {
-  background-color: #2c2c2c; /* Cor de fundo da navbar */
+  background-color: #f5f5f5; /* Cor de fundo da navbar */
   padding: 10px; /* Espaçamento interno */
 }
 .navbar-light .navbar-nav .nav-link {
-  color: white !important; /* Define a cor do texto como branca */
+  color: 1b1626 !important; /* Define a cor do texto como branca */
 }
 
 .navbar-light .navbar-nav .nav-link:hover {
@@ -60,7 +60,7 @@
 
 /* Estilo para os itens do dropdown */
 .dropdown-item {
-  color: #fff; /* Cor do texto dos itens do dropdown */
+  color: #333; /* Cor do texto dos itens do dropdown */
   padding: 10px; /* Espaçamento interno */
   text-decoration: none; /* Remover underline */
 }

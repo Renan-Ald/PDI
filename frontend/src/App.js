@@ -14,7 +14,9 @@ import Footer from './Footer';
 import AvaliacaoResultado from './AvaliacaoResultado';
 import AvaliacaoView from './AvaliacaoView';
 import ForgotPassword from './ForgotPassword';
-import ResetPassword from './ResetPassword';
+import ResetPassword from './RequestResetPassword';
+import RequestResetPassword from './RequestResetPassword';
+import ResetPasswordConfirm from './ResetPasswordConfirm';
 
 function App() {
   const isProfissionalAuthenticated = () => {
@@ -29,6 +31,8 @@ function App() {
           <Route path="/" exact component={Home} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
+          <Route path="/reset-password/:uidb64/:token" component={ResetPasswordConfirm} />
+          <Route path="/request-reset-password" component={RequestResetPassword} />
           <Route path="/carrinho" component={Cart} />
           <Route path="/perfil" component={Profile} />
           <Route path="/avaliacoes" component={Avaliacao} />

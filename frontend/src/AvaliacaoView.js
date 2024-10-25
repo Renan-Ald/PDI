@@ -76,6 +76,7 @@ const AvaliacaoView = () => {
   }
 
   return (
+    <section className='vh-100'>
     <div className="avaliacao-view">
       <div className="avaliacao-container mt-5">
         <h2 className="avaliacao-title text-center mb-4">Visualização da Avaliação</h2>
@@ -99,6 +100,7 @@ const AvaliacaoView = () => {
         ))}
       </div>
     </div>
+    </section>
   );
 };
 

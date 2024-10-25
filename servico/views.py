@@ -8,7 +8,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status, viewsets, generics
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 from django.db import transaction
 from django.utils import timezone
 from decimal import Decimal
@@ -34,24 +42,7 @@ from django.urls import reverse_lazy
 
 
 User = get_user_model()
-@csrf_exempt
-def password_reset_request(request):
-    if request.method == "POST":
-        form = PasswordResetForm(request.POST)
-        if form.is_valid():
-            # Enviar o e-mail para redefinição de senha
-            form.save(request=request)
-            return render(request, "registration/password_reset_done.html")  # Use apenas o nome do template
-    else:
-        form = PasswordResetForm()
-    return render(request, "registration/password_reset.html", {"password_reset_form": form})  # Aqui também
-class CustomPasswordResetConfirmView(PasswordResetConfirmView):
-    template_name = 'servico/templates/registration/password_reset_confirm.html'
-    success_url = reverse_lazy('password_reset_complete')
 
-    def form_valid(self, form):
-        messages.success(self.request, 'Sua senha foi redefinida com sucesso.')
-        return super().form_valid(form)
     
 
 @csrf_exempt
@@ -391,3 +382,48 @@ class TarefaViewSet(viewsets.ModelViewSet):
         if bloco_id is not None:
             queryset = queryset.filter(bloco_id=bloco_id)
         return queryset
+
+class RequestPasswordResetView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = get_object_or_404(User, email=email)
+        token = default_token_generator.make_token(user)
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+
+        reset_link = f"http://localhost:3000/reset-password/{uidb64}/{token}/"
+        send_mail(
+            'Password Reset Request',
+            f'Use the link to reset your password: {reset_link}',
+            'noreply@seu-dominio.com',
+            [email],
+            fail_silently=False,
+        )
+
+        return Response({'message': 'Password reset link has been sent to your email.'}, status=status.HTTP_200_OK)
+
+class PasswordResetConfirmView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        uidb64 = request.data.get('uidb64')
+        token = request.data.get('token')
+        new_password = request.data.get('new_password')
+
+        if not (uidb64 and token and new_password):
+            return Response({'error': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return Response({'error': 'Invalid token or user'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if default_token_generator.check_token(user, token):
+            user.set_password(new_password)
+            user.save()
+            return Response({'message': 'Password reset successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)

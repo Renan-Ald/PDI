@@ -1,35 +1,45 @@
 import React, { useEffect, useState } from 'react';
+import Loader from './Loader';
 import { getUserProfile } from './api';
-import './Profile.css'
+import './Profile.css';
+
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [pagamentos, setPagamentos] = useState([]);
+  const [loading, setLoading] = useState(true); // Estado de carregamento
 
   useEffect(() => {
     const fetchProfileData = async () => {
+      setLoading(true); // Inicia o carregamento
       try {
         const data = await getUserProfile();
         setUserData(data.user);
         setPagamentos(data.pagamentos);
       } catch (error) {
         console.error('Erro ao buscar dados do perfil:', error);
+      } finally {
+        setLoading(false); // Encerra o carregamento após a requisição
       }
     };
 
     fetchProfileData();
   }, []);
 
+  if (loading) {
+    return <Loader />; // Exibe o loader enquanto os dados são carregados
+  }
+
   if (!userData) {
-    return <div>Carregando...</div>;
+    return <div>Erro ao carregar os dados do usuário.</div>;
   }
 
   return (
-    <div className="profile col-md-12" >
+    <div className="profile col-md-12">
       <link
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       />
-      <br></br>
+      <br />
       <div className="row">
         {/* Card de Perfil */}
         <div className="col-md-4">

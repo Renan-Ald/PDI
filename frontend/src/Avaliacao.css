@@ -1,10 +1,12 @@
 /* Estiliza o fundo da página */
 
-
+.vh-100{
+  height: 100vh !important;
+}
 /* Estiliza o conteúdo do modal */
 .modal-content {
-  background-color: #444 !important; /* Fundo do modal um pouco mais claro */
-  color: white; /* Cor do texto do modal */
+  background-color: white !important; /* Fundo do modal um pouco mais claro */
+  color: #555 ; /* Cor do texto do modal */
 }
 
 /* Estiliza os cabeçalhos do modal */

@@ -62,16 +62,17 @@ const Cart = () => {
   };
 
   return (
+    <section className='vh-100'>
     <div id='cart' className="container mt-5 cart-background">
-      <h1 className="mb-4 text-white">Meu Carrinho</h1>
-      <h3 className="mb-4 text-white">Total: R${total.toFixed(2)}</h3>
+      <h1 className="mb-4 text-cart">Meu Carrinho</h1>
+      <h3 className="mb-4 text-cart">Total: R${total.toFixed(2)}</h3>
       <ul className="list-group mb-3 cart-background">
         {cartItems.map(item => (
           <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center cart-background">
             <div>
-              <h5 className="text-white">{item.servico.nome}</h5>
-              <p className="text-white">{item.servico.descricao}</p>
-              <p className="text-white">Preço: R${item.servico.valor}</p>
+              <h5 className="text-cart">{item.servico.nome}</h5>
+              <p className="text-cart">{item.servico.descricao}</p>
+              <p className="text-cart">Preço: R${item.servico.valor}</p>
             </div>
             <div className="d-flex align-items-center">
               <button
@@ -98,7 +99,9 @@ const Cart = () => {
         ))}
       </ul>
       <button className="btn btn-primary" onClick={handleCheckout}>Finalizar Compra</button>
+      <br></br>
     </div>
+    </section>
   );  
 };
 

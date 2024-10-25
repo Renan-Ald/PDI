@@ -3,8 +3,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter    
 from .views import register, login_view, ServicoListView, ServicoDetailView, PedidoViewSet, DetalhePedidoViewSet,PagamentoViewSet,finalizar_checkout,webhook_pagamento,ItemCarrinhoViewSet,user_profile,AvaliacaoViewSet,pagamentos_concluidos,AvaliacoesPendentesView,get_usuario,ResultadoViewSet,TarefaViewSet,BlocoViewSet
 from . import views
-from .views import password_reset_request, CustomPasswordResetConfirmView
 from django.contrib.auth import views as auth_views
+from .views import RequestPasswordResetView, PasswordResetConfirmView
 
 
 router = DefaultRouter()
@@ -17,6 +17,8 @@ router.register(r'resultados', ResultadoViewSet)
 router.register(r'blocos', BlocoViewSet)
 router.register(r'tarefas', TarefaViewSet)
 urlpatterns = [
+    path('request-reset-password/', RequestPasswordResetView.as_view(), name='request-reset-password'),
+    path('reset-password-confirm/', PasswordResetConfirmView.as_view(), name='reset-password-confirm'),
     path('register/', register, name='register'),
     path('login/', login_view, name='login'),
     path('servicos/', ServicoListView.as_view(), name='servico-list'),
@@ -31,7 +33,5 @@ urlpatterns = [
     path('avaliador/login/', views.profissional_login_view, name='profissional-login'),
     path('avaliacoes-pendentes/', AvaliacoesPendentesView.as_view(), name='avaliacoes-pendentes'),
     path('usuarios/<int:id>/', get_usuario, name='get_usuario'),
-    path('esqueceu-sua-senha/', password_reset_request, name='password_reset'),
-    path('reset/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('senha-resetada/', auth_views.PasswordResetCompleteView.as_view(template_name='usuario/password_reset_complete.html'), name='password_reset_complete'),
 ]

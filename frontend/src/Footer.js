@@ -1,6 +1,6 @@
 import React from 'react';
 import './footer.css'; 
-
+import logo from './img/Logo-removebg-preview.png';
 const Footer = () => {
   return (
     <>
@@ -17,7 +17,7 @@ const Footer = () => {
         <div className="container">
           <div className="row border-top border-top-secondary pt-3">
             <div className="col-lg-3 col-md-6 mb-3">
-              <img className="mb-2" src="assets/img/logo.svg" width="100" alt="Logo" />
+              <img className="mb-2"  src={logo} width="100" alt="Logo" />
             </div>
             <div className="col-lg-3 col-md-6 mb-3">
               <p className="fs-6 mb-2">Quick Links</p>
