@@ -35,3 +35,4 @@ yarn-error.log
 # Ignorar arquivos do sistema operacional
 .DS_Store
 Thumbs.db
+.env
