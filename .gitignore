@@ -1,1 +1,37 @@
-pdi/_pycache_/*
+# Ignorar arquivos do Python/Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3  # se estiver usando SQLite
+*.pyc
+*.pyo
+
+# Ignorar arquivos de ambiente virtual do Python
+venv/
+.env
+*.env
+
+# Ignorar configurações do Docker
+*.log
+docker-compose.override.yml
+*.pid
+
+# Ignorar dependências do Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Ignorar arquivos de build do React
+/build
+/public
+
+# Ignorar configurações específicas de IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignorar arquivos do sistema operacional
+.DS_Store
+Thumbs.db
