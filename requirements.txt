@@ -3,3 +3,5 @@ mysqlclient>=2.0
 djangorestframework
 django-cors-headers
 djangorestframework-simplejwt
+openai>=1.0.0 
+python-dotenv

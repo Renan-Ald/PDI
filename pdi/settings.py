@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 from datetime import timedelta
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -136,6 +138,7 @@ EMAIL_HOST_USER = 'enviot6@gmail.com'  # Substitua pelo seu email
 EMAIL_HOST_PASSWORD = 'dqyw wjsu uvzk vfim'  # Substitua pela sua senha
 DEFAULT_FROM_EMAIL = 'enviot6@gmail.com'
 
+load_dotenv()  
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

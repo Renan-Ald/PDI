@@ -192,6 +192,7 @@ const AvaliacaoResultado = () => {
   }
 
   return (
+    <section className="vh-100">
     <div className='av-result'>
     <div className="container">
       <h1 className="mt-4">Avaliação</h1>
@@ -252,6 +253,7 @@ const AvaliacaoResultado = () => {
       <button className="btn btn-primary mt-3" onClick={handleSave}>Salvar</button>
     </div>
     </div>
+    </section>
   );
 };
 

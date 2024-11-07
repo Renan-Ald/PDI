@@ -265,5 +265,17 @@ export const createAvaliacao = async (avaliacaoData) => {
     throw error;
   }
 };
+///chat GPT 
+
+export const analyzeAvaliacao = async (avaliacaoData) => {
+  try {
+    const response = await privateApi.post('/analyze-avaliacao/', avaliacaoData);
+    console.log('Resposta do endpoint analyze-avaliacao:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao analisar avaliação:', error);
+    throw error;
+  }
+};
 
 export default privateApi;

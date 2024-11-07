@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { getPagamentosConcluidos, getAvaliacao, createAvaliacao, updateAvaliacao } from './api';
+import { getPagamentosConcluidos, getAvaliacao, createAvaliacao, updateAvaliacao,analyzeAvaliacao } from './api';
+import api from './api';
 import './Avaliacao.css';
 
 const Avaliacao = () => {
@@ -80,35 +81,38 @@ const Avaliacao = () => {
     const servicoId = selectedPagamento.servico.id;
     const pagamentoId = selectedPagamento.id;
 
+    const avaliacaoData = {
+      formacao_tecnica: formacaoTecnica,
+      graduacao: graduacao,
+      posgraduacao: posgraduacao,
+      formacao_complementar: formacaoComplementar,
+      cargo_desejado: cargoDesejado,
+      nucleo_de_trabalho: nucleoDeTrabalho,
+      data_admissao: dataAdmissao,
+      usuario: userId,
+      servico: servicoId,
+      pagamento: pagamentoId,
+    };
+
     try {
+      // Verifica se a avaliação já existe
       if (avaliacao) {
-        await updateAvaliacao(avaliacao.id, {
-          formacao_tecnica: formacaoTecnica,
-          graduacao: graduacao,
-          posgraduacao: posgraduacao,
-          formacao_complementar: formacaoComplementar,
-          cargo_desejado: cargoDesejado,
-          nucleo_de_trabalho: nucleoDeTrabalho,
-          data_admissao: dataAdmissao,
-          usuario: userId,
-          servico: servicoId,
-          pagamento: pagamentoId,
-        });
+        await updateAvaliacao(avaliacao.id, avaliacaoData);
       } else {
-        await createAvaliacao({
-          formacao_tecnica: formacaoTecnica,
-          graduacao: graduacao,
-          posgraduacao: posgraduacao,
-          formacao_complementar: formacaoComplementar,
-          cargo_desejado: cargoDesejado,
-          nucleo_de_trabalho: nucleoDeTrabalho,
-          data_admissao: dataAdmissao,
-          usuario: userId,
-          servico: servicoId,
-          pagamento: pagamentoId,
-        });
+        await createAvaliacao(avaliacaoData);
+        console.log("aqui fica o create avaliacao")
+        console.log(createAvaliacao)
       }
 
+      // Análise da avaliação e criação do resultado
+      const analyzeResult = await analyzeAvaliacao(avaliacaoData);
+      console.log('Resultado da análise:', analyzeResult.analysis);
+
+      const resultId = await createResult(analyzeResult);
+      console.log("resulado depois de criado:" + resultId)
+      await saveInitialBlocoAndTarefa(analyzeResult, resultId);
+
+      // Lógica para resetar o formulário e carregar novas avaliações
       resetForm();
       setSelectedPagamento(null);
 
@@ -128,6 +132,86 @@ const Avaliacao = () => {
     }
   };
 
+// Função 'createResult' para criar o resultado no backend
+const createResult = async (resultData) => {
+  try {
+    const postData = {
+      avaliacao_id: avaliacao.id,
+      validade: "2024-12-31",
+      responsavel: '99',
+      data_resultado: "2024-12-31"
+    };
+    console.log("Enviando postData:", postData);
+
+    const response = await api.post('resultados/', postData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+
+    console.log("Response data:", response.data); // Verifique a estrutura exata da resposta
+
+    // Use um caminho seguro para acessar o id
+    const idResultado = response.data?.idresultado; 
+    if (idResultado) {
+      return idResultado;
+    } else {
+      throw new Error('ID do resultado não encontrado.');
+    }
+  } catch (error) {
+    console.error('Erro ao criar resultado:', error);
+    throw error;
+  }
+};
+
+
+  const saveInitialBlocoAndTarefa = async (analyzeResult, resultId) => {
+    try {
+      console.log('Enviando dados para bloco:', {
+        descricao: 'Bloco de Tratativa Inicial',
+        resultado_id: resultId,
+      });
+      console.log('Token:', localStorage.getItem('token'));
+  
+      const blocoResponse = await api.post(
+        'blocos/',
+        {
+          descricao: 'Bloco de Tratativa Inicial',
+          resultado_id: resultId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Substitua com seu token de autenticação
+          },
+        }
+      );
+  
+      if (blocoResponse.data && blocoResponse.data.idbloco) {
+        const blocoId = blocoResponse.data.idbloco;
+        console.log('Bloco ID recebido:', blocoId);
+  
+        const tarefaData = {
+          tarefa: 'Tratativa Inicial',
+          descricao: analyzeResult.analysis,
+          aprendizado: 'Aprendizado inicial com base na análise.',
+          prazo_registro: new Date().toISOString(),
+          bloco_id: blocoId,
+        };
+        console.log('Enviando dados para tarefa:', tarefaData);
+  
+        await api.post('tarefas/', tarefaData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+      } else {
+        throw new Error('ID do bloco não encontrado na resposta.');
+      }
+    } catch (error) {
+      console.error('Erro ao criar bloco e tarefa iniciais:', error);
+    }
+  };
+  
   const handleVerAvaliacoes = (avaliacaoId) => {
     if (avaliacaoId) {
       history.push(`/avaliacao-view/${avaliacaoId}`);
@@ -136,65 +220,65 @@ const Avaliacao = () => {
 
   return (
     <section className='vh-100'>
-    <div className="container mt-5">
-      <h1>Avaliações</h1>
-      <div className="table-responsive">
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>Serviço</th>
-              <th>Valor</th>
-              <th>Avaliar</th>
-              <th>Ver Avaliação</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pagamentos.length > 0 ? (
-              pagamentos.map((pagamento) => (
-                <tr key={pagamento.id}>
-                  <td>{pagamento.servico.nome || 'Carregando...'}</td>
-                  <td>{pagamento.valor_liquido}</td>
-                  <td>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => handlePagamentoSelect(pagamento)}
-                    >
-                      Avaliar
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => handleVerAvaliacoes(avaliacoes[pagamento.id]?.id)}
-                      disabled={!avaliacoes[pagamento.id]}
-                    >
-                      Ver Avaliação
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
+      <div className="container mt-5">
+        <h1>Avaliações</h1>
+        <div className="table-responsive">
+          <table className="table table-striped">
+            <thead>
               <tr>
-                <td colSpan="4" className="text-center">Nenhum pagamento concluído encontrado.</td>
+                <th>Serviço</th>
+                <th>Valor</th>
+                <th>Avaliar</th>
+                <th>Ver Avaliação</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-          
-      {modalOpen && selectedPagamento && (
-        <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }} tabIndex="-1" role="dialog" aria-labelledby="avaliacaoModalLabel" aria-hidden="true">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="avaliacaoModalLabel">Detalhes da Avaliação</h5>
-                <button type="button" className="close" onClick={() => setModalOpen(false)}>
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <p><strong>Serviço:</strong> {selectedPagamento.servico.nome}</p>
-                <form onSubmit={handleSubmit}>
+            </thead>
+            <tbody>
+              {pagamentos.length > 0 ? (
+                pagamentos.map((pagamento) => (
+                  <tr key={pagamento.id}>
+                    <td>{pagamento.servico.nome || 'Carregando...'}</td>
+                    <td>{pagamento.valor_liquido}</td>
+                    <td>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handlePagamentoSelect(pagamento)}
+                      >
+                        Avaliar
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => handleVerAvaliacoes(avaliacoes[pagamento.id]?.id)}
+                        disabled={!avaliacoes[pagamento.id]}
+                      >
+                        Ver Avaliação
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="text-center">Nenhum pagamento concluído encontrado.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {modalOpen && selectedPagamento && (
+          <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }} tabIndex="-1" role="dialog" aria-labelledby="avaliacaoModalLabel" aria-hidden="true">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="avaliacaoModalLabel">Detalhes da Avaliação</h5>
+                  <button type="button" className="close" onClick={() => setModalOpen(false)}>
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  <p><strong>Serviço:</strong> {selectedPagamento.servico.nome}</p>
+                  <form onSubmit={handleSubmit}>
                   <div className="form-group mt-3">
                     <label htmlFor="formacaoTecnica">Formação Técnica:</label>
                     <input type="text" className="form-control" value={formacaoTecnica} onChange={(e) => setFormacaoTecnica(e.target.value)} />
@@ -227,13 +311,17 @@ const Avaliacao = () => {
                     <button type="submit" className="btn btn-success">Salvar Avaliação</button>
                     <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancelar</button>
                   </div>
-                </form>
+                    <div className="modal-footer">
+                      <button type="submit" className="btn btn-success">Salvar Avaliação</button>
+                      <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancelar</button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
     </section>
   );
 };

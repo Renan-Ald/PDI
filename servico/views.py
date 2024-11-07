@@ -21,7 +21,7 @@ from django.db import transaction
 from django.utils import timezone
 from decimal import Decimal
 import json
-
+import os
 from .serializers import ServicoSerializer, PedidoSerializer, DetalhePedidoSerializer, PagamentoSerializer, ItemCarrinhoSerializer, CustomUserSerializer, AvaliacaoSerializer,ResultadoSerializer,TarefaSerializer,BlocoSerializer
 from .models import Servico, Pedido, DetalhePedido, Pagamento, ItemCarrinho, Avaliacao,Transacao,Profissional,CustomUser,Resultado,Bloco,Tarefa
 
@@ -39,11 +39,14 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.urls import reverse_lazy
+from openai import OpenAI
 
+client = OpenAI()
 
 User = get_user_model()
 
-    
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
 
 @csrf_exempt
 def register(request):
@@ -81,16 +84,16 @@ def login_view(request):
             data = json.loads(request.body)
             email = data.get('email')
             password = data.get('password')
-            
+
             user = authenticate(request, email=email, password=password)
-            
+
             if user is not None:
                 auth_login(request, user)
                 refresh = RefreshToken.for_user(user)
-                
+
                 # Verificar se o usuário é um avaliador
                 is_avaliador = Profissional.objects.filter(email=email).exists()
-                
+
                 return JsonResponse({
                     'status': 'success',
                     'access': str(refresh.access_token),
@@ -119,15 +122,15 @@ def profissional_login_view(request):
             data = json.loads(request.body)
             email = data.get('email')
             senha = data.get('senha')
-            
+
             # Autenticar o profissional
             profissional = Profissional.objects.filter(email=email).first()
-            
+
             if profissional and profissional.senha == senha:
                 if profissional.is_active:
                     # Gerar o token JWT
                     refresh = RefreshToken.for_user(profissional)
-                    
+
                     return JsonResponse({
                         'status': 'success',
                         'access': str(refresh.access_token),
@@ -139,7 +142,7 @@ def profissional_login_view(request):
                     return JsonResponse({'status': 'error', 'errors': 'Conta desativada'}, status=403)
             else:
                 return JsonResponse({'status': 'error', 'errors': 'Credenciais inválidas'}, status=401)
-        
+
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'errors': 'JSON inválido'}, status=400)
     return JsonResponse({'status': 'error', 'errors': 'Método não permitido'}, status=405)
@@ -150,15 +153,15 @@ def user_profile(request):
     try:
         user = request.user
         pagamentos = Pagamento.objects.filter(usuario=user)
-        
+
         user_serializer = CustomUserSerializer(user)
         pagamentos_serializer = PagamentoSerializer(pagamentos, many=True)
-        
+
         data = {
             'user': user_serializer.data,
             'pagamentos': pagamentos_serializer.data
         }
-        
+
         return Response(data)
     except Exception as e:
         return Response({'status': 'error', 'error': str(e)}, status=400)
@@ -256,7 +259,7 @@ def webhook_pagamento(request):
         return Response({'status': 'error', 'error': 'Transação não encontrada'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'status': 'error', 'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def pagamentos_concluidos(request):
@@ -265,11 +268,11 @@ def pagamentos_concluidos(request):
         pagamentos = Pagamento.objects.filter(usuario=request.user, status='concluido')
         if not pagamentos:
             return Response({'status': 'success', 'message': 'Nenhum pagamento concluído encontrado'}, status=status.HTTP_204_NO_CONTENT)
-        
+
         # Serializa os dados dos pagamentos
         serializer = PagamentoSerializer(pagamentos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     except Exception as e:
         # Adiciona mais detalhes ao erro retornado
         return Response({'status': 'error', 'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -345,7 +348,7 @@ class AvaliacoesPendentesView(APIView):
 class AvaliacaoViewSet(viewsets.ModelViewSet):
     queryset = Avaliacao.objects.all()
     serializer_class = AvaliacaoSerializer
-    
+
     def get_queryset(self):
         queryset = super().get_queryset()
         pagamento_id = self.request.query_params.get('pagamento_id', None)
@@ -427,3 +430,38 @@ class PasswordResetConfirmView(APIView):
             return Response({'message': 'Password reset successfully'}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+
+ # Defina a chave API no arquivo settings.py
+
+@api_view(['POST'])
+def analyze_avaliacao(request):
+    try:
+        # Dados do formulário de avaliação
+        form_data = request.data
+
+        # Formate o prompt para enviar à API do ChatGPT
+        prompt = f"""
+        Avaliação para análise:
+        Formação Técnica: {form_data.get('formacao_tecnica')}
+        Graduação: {form_data.get('graduacao')}
+        Pós-graduação: {form_data.get('posgraduacao')}
+        Formação Complementar: {form_data.get('formacao_complementar')}
+        Cargo Desejado: {form_data.get('cargo_desejado')}
+        Núcleo de Trabalho: {form_data.get('nucleo_de_trabalho')}
+        Data de Admissão: {form_data.get('data_admissao')}
+        
+        Análise detalhada e sugestões de melhoria:
+        """
+
+        # Chame o ChatGPT com o prompt atualizado
+        response = client.chat.completions.create(model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=10,
+        temperature=0.7)
+
+        # Retorne a análise do ChatGPT
+        analysis = response.choices[0].message.content.strip()
+        return Response({"analysis": analysis}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

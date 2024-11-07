@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import register, login_view, ServicoListView, ServicoDetailView, PedidoViewSet, DetalhePedidoViewSet,PagamentoViewSet,finalizar_checkout,webhook_pagamento,ItemCarrinhoViewSet,user_profile,AvaliacaoViewSet,pagamentos_concluidos,AvaliacoesPendentesView,get_usuario,ResultadoViewSet,TarefaViewSet,BlocoViewSet
 from . import views
 from django.contrib.auth import views as auth_views
-from .views import RequestPasswordResetView, PasswordResetConfirmView
+from .views import RequestPasswordResetView, PasswordResetConfirmView,analyze_avaliacao
 
 
 router = DefaultRouter()
@@ -34,4 +34,5 @@ urlpatterns = [
     path('avaliacoes-pendentes/', AvaliacoesPendentesView.as_view(), name='avaliacoes-pendentes'),
     path('usuarios/<int:id>/', get_usuario, name='get_usuario'),
     path('senha-resetada/', auth_views.PasswordResetCompleteView.as_view(template_name='usuario/password_reset_complete.html'), name='password_reset_complete'),
+    path('analyze-avaliacao/', analyze_avaliacao, name='analyze_avaliacao'),
 ]
