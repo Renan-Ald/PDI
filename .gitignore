@@ -1,3 +1,4 @@
+pdi/_pycache_/*
 # Ignorar arquivos do Python/Django
 __pycache__/
 *.py[cod]
@@ -35,4 +36,3 @@ yarn-error.log
 # Ignorar arquivos do sistema operacional
 .DS_Store
 Thumbs.db
-.env

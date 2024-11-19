@@ -225,7 +225,7 @@ const AvaliacaoResultado = () => {
                 <input
                   type="date"
                   className="form-control mb-2"
-                  placeholder="Prazo"
+                  placeholder="realizado"
                   value={tarefa.prazo_registro ? tarefa.prazo_registro.slice(0, 10) : ''}
                   onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'prazo_registro', e.target.value)}
                 />

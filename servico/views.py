@@ -456,7 +456,7 @@ def analyze_avaliacao(request):
         # Chame o ChatGPT com o prompt atualizado
         response = client.chat.completions.create(model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
-        max_tokens=10,
+        max_tokens=300,
         temperature=0.7)
 
         # Retorne a análise do ChatGPT
@@ -465,3 +465,12 @@ def analyze_avaliacao(request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_resultado(request, avaliacao_id):
+    try:
+        resultado = Resultado.objects.get(avaliacao_id=avaliacao_id, user=request.user)
+        serializer = ResultadoSerializer(resultado)
+        return Response(serializer.data)
+    except Resultado.DoesNotExist:
+        return Response({"detail": "Não autorizado a visualizar este resultado."}, status=403)

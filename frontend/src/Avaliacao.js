@@ -99,18 +99,20 @@ const Avaliacao = () => {
       if (avaliacao) {
         await updateAvaliacao(avaliacao.id, avaliacaoData);
       } else {
-        await createAvaliacao(avaliacaoData);
-        console.log("aqui fica o create avaliacao")
-        console.log(createAvaliacao)
+        const avaliacao_create= await createAvaliacao(avaliacaoData);
+         // Análise da avaliação e criação do resultado
+
+        console.log("criadao da avaliação bem-sucedida !!!!!!!!!!!!")
+        console.log(avaliacao_create)
+        const analyzeResult = await analyzeAvaliacao(avaliacaoData);
+        console.log('Resultado da análise:', analyzeResult.analysis);
+        const resultId = await createResult(avaliacao_create);
+        await saveInitialBlocoAndTarefa(analyzeResult, resultId);
+        console.log("resulado depois de criado:" + resultId)
       }
 
-      // Análise da avaliação e criação do resultado
-      const analyzeResult = await analyzeAvaliacao(avaliacaoData);
-      console.log('Resultado da análise:', analyzeResult.analysis);
-
-      const resultId = await createResult(analyzeResult);
-      console.log("resulado depois de criado:" + resultId)
-      await saveInitialBlocoAndTarefa(analyzeResult, resultId);
+     
+   
 
       // Lógica para resetar o formulário e carregar novas avaliações
       resetForm();
@@ -136,7 +138,7 @@ const Avaliacao = () => {
 const createResult = async (resultData) => {
   try {
     const postData = {
-      avaliacao_id: avaliacao.id,
+      avaliacao_id: resultData.id,
       validade: "2024-12-31",
       responsavel: '99',
       data_resultado: "2024-12-31"
@@ -311,10 +313,6 @@ const createResult = async (resultData) => {
                     <button type="submit" className="btn btn-success">Salvar Avaliação</button>
                     <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancelar</button>
                   </div>
-                    <div className="modal-footer">
-                      <button type="submit" className="btn btn-success">Salvar Avaliação</button>
-                      <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancelar</button>
-                    </div>
                   </form>
                 </div>
               </div>

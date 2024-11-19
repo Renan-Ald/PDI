@@ -117,6 +117,7 @@ class AvaliacaoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ResultadoSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(source='user.id', read_only=True)
     class Meta:
         model = Resultado
         fields = '__all__'
