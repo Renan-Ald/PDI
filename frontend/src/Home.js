@@ -57,9 +57,9 @@ const Home = () => {
       </section>
       <section className='sub-home'>
       <ul className='sub-home-list'>
-        <li>ACESSO IMEDIATO</li>
-        <li>COMPRA SEGURA</li>
-        <li>7 DIAS DE GARANTIA</li>
+        <li><i class="bi bi-check-circle"></i> ACESSO IMEDIATO</li>
+        <li><i class="bi bi-shield-check"></i> COMPRA SEGURA</li>
+        <li> <i class="bi bi-patch-check"></i> 7 DIAS DE GARANTIA</li>
         <br></br>
       </ul>
 </section>
@@ -118,13 +118,13 @@ const Home = () => {
       <section className="section-products" id="products">
     <div className="container">
       <div className="section-header">
-        <h1>Product</h1>
+        <h1>Produtos</h1>
       </div>
       <div className="product-list">
         {services.map((service) => (
           <div className="product-card" key={service.id}>
             <div className="product-info">
-              <h2 className="product-title">Lorem ipsum, dolor sit amet consectetur adipisicing elit</h2>
+              <h2 className="product-title">{service.descricao}</h2>
               <h3 className="product-title">{service.nome}</h3>
               <h4 className="product-price">R${service.valor}</h4>
               <a className="btn btn-cart" href="#topo" onClick={() => handleAddToCart(service.id)}>Comprar</a> {/* Botão com gradiente */}

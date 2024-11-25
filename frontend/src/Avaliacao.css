@@ -1,7 +1,10 @@
 /* Estiliza o fundo da página */
-
+.modal-body-scrollable {
+  max-height: 60vh; /* Ajuste a altura máxima para o modal */
+  overflow-y: auto; /* Adiciona rolagem vertical */
+}
 .vh-100{
-  height: 100vh !important;
+  height: auto !important;
 }
 /* Estiliza o conteúdo do modal */
 .modal-content {

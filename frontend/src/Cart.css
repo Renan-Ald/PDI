@@ -27,5 +27,5 @@
     color: black; /* Cor do texto das linhas da lista */
 }
 .vh-100{
-    height: 100vh !important;
+    height: auto !important;
 }

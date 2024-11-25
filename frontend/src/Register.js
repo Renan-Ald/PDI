@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import InputMask from 'react-input-mask'; 
 import { register } from './api';
 import './Register.css';
+
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [nomeCompleto, setNomeCompleto] = useState('');
   const [cep, setCep] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -13,22 +16,30 @@ const Register = () => {
   const [estado, setEstado] = useState('');
   const [pais, setPais] = useState('');
   const [cpf, setCpf] = useState('');
+  const [error, setError] = useState('');
   const history = useHistory();
+
+  const removeMask = value => value.replace(/[\s.()\-\[\]]/g, '');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (password !== confirmPassword) {
+      setError('As senhas não coincidem.');
+      return;
+    }
     try {
+      
       await register({
         email,
         password,
         nome_completo: nomeCompleto,
-        cep,
-        telefone,
+        cep: removeMask(cep),
+        telefone: removeMask(telefone),
         endereco,
         endereco2,
         estado,
         pais,
-        cpf,
+        cpf: removeMask(cpf),
       });
       history.push('/login'); // Redireciona para a página de login após o registro
     } catch (error) {
@@ -43,7 +54,7 @@ const Register = () => {
         href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       />
       <div className="formbold-form-wrapper">
-         <h2 class="">Register now</h2>
+        <h2>Register now</h2>
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt.
@@ -62,16 +73,15 @@ const Register = () => {
             </div>
             <div className="form-group">
               <label className="formbold-form-label">CPF:</label>
-              <input
-                type="text"
-                className="formbold-form-input"
+              <InputMask
+                mask="999.999.999-99"
                 value={cpf}
                 onChange={(e) => setCpf(e.target.value)}
+                className="formbold-form-input"
                 required
               />
             </div>
           </div>
-          <div className="formbold-input-flex">
             <div className="form-group">
               <label className="formbold-form-label">Email:</label>
               <input
@@ -82,6 +92,8 @@ const Register = () => {
                 required
               />
             </div>
+          
+          <div className="formbold-input-flex">
             <div className="form-group">
               <label className="formbold-form-label">Senha:</label>
               <input
@@ -92,25 +104,36 @@ const Register = () => {
                 required
               />
             </div>
+            <div className="form-group">
+              <label className="formbold-form-label">Confirmar Senha:</label>
+              <input
+                type="password"
+                className="formbold-form-input"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+            </div>
           </div>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
           <div className="formbold-input-flex">
             <div className="form-group">
               <label className="formbold-form-label">CEP:</label>
-              <input
-                type="text"
-                className="formbold-form-input"
+              <InputMask
+                mask="99999-999"
                 value={cep}
                 onChange={(e) => setCep(e.target.value)}
+                className="formbold-form-input"
                 required
               />
             </div>
             <div className="form-group">
               <label className="formbold-form-label">Telefone:</label>
-              <input
-                type="text"
-                className="formbold-form-input"
+              <InputMask
+                mask="(99) 99999-9999"
                 value={telefone}
                 onChange={(e) => setTelefone(e.target.value)}
+                className="formbold-form-input"
                 required
               />
             </div>
@@ -158,13 +181,13 @@ const Register = () => {
           </div>
           <div className="formbold-checkbox-wrapper">
             <label className="formbold-checkbox-label">
-              <input
-                 type="checkbox"
-                required
-              />  Eu concordo com os <a href="#">termos, condições e políticas</a>.
+              <input type="checkbox" required /> Eu concordo com os{' '}
+              <a href="#">termos, condições e políticas</a>.
             </label>
           </div>
-          <button type="submit" className="formbold-btn">Registrar</button>
+          <button type="submit" className="formbold-btn">
+            Registrar
+          </button>
         </form>
       </div>
     </div>

@@ -26,27 +26,33 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <Header />
-        <Switch>
-          <Route path="/" exact component={Home} />
-          <Route path="/login" component={Login} />
-          <Route path="/register" component={Register} />
-          <Route path="/reset-password/:uidb64/:token" component={ResetPasswordConfirm} />
-          <Route path="/request-reset-password" component={RequestResetPassword} />
-          <Route path="/carrinho" component={Cart} />
-          <Route path="/perfil" component={Profile} />
-          <Route path="/avaliacoes" component={Avaliacao} />
-          <Route path="/avaliador/login" component={LoginProfissional} />
-          <Route path="/forgot-password" component={ForgotPassword} />
-          <Route path="/reset/:uid/:token" component={ResetPassword} />
-          <Route path="/avaliador">
-            {isProfissionalAuthenticated() ? <AvaliadorArea /> : <Redirect to="/avaliador/login" />}
-          </Route>
-          <Route path="/avaliacao-resultado/:id" component={AvaliacaoResultado} />
-          <Route path="/avaliacao-view/:id" component={AvaliacaoView} />
-          {/* <Redirect to="/" /> Redireciona para a Home se a rota não for encontrada */}
-        </Switch>
-        <Footer />
+        <div id="root">
+          <Header />
+          <div className="main-content">
+            <Switch>
+              <Route path="/" exact component={Home} />
+              <Route path="/login" component={Login} />
+              <Route path="/register" component={Register} />
+              <Route path="/request-reset-password" component={RequestResetPassword} />
+              <Route path="/reset-password/:uidb64/:token" component={ResetPasswordConfirm} />
+              <Route path="/carrinho" component={Cart} />
+              <Route path="/perfil" component={Profile} />
+              <Route path="/avaliacoes" component={Avaliacao} />
+              <Route path="/avaliador/login" component={LoginProfissional} />
+              <Route path="/forgot-password" component={ForgotPassword} />
+              <Route path="/avaliador">
+                {isProfissionalAuthenticated() ? <AvaliadorArea /> : <Redirect to="/avaliador/login" />}
+              </Route>
+              <Route path="/avaliacao-resultado/:id" component={AvaliacaoResultado} />
+              <Route path="/avaliacao-view/:id" component={AvaliacaoView} />
+              {/* Página de erro ou redirecionamento */}
+              <Route path="*">
+                <Redirect to="/" />
+              </Route>
+            </Switch>
+          </div>
+          <Footer />
+        </div>
       </Router>
     </AuthProvider>
   );

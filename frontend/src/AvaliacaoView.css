@@ -1,6 +1,6 @@
 /* CSS exclusivo para AvaliacaoView */
-.vh-100{
-  height: 100vh !important;
+.vh-1002{
+  height: auto !important;
 }
 .avaliacao-view {
   background-color: white;
@@ -8,11 +8,15 @@
   font-family: 'Arial', sans-serif; /* Você pode trocar por uma fonte mais bonita como 'Roboto' ou 'Open Sans' */
   padding: 20px;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .avaliacao-container {
   max-width: 800px;
   margin: 0 auto;
+  flex-grow: 1;
 }
 
 .avaliacao-title {
@@ -63,4 +67,103 @@
 .li-view{
   color: black;
   font-family: 'Arial', sans-serif;
+}
+.avaliacao-bloco-title {
+  font-size: 1.2rem;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.avaliacao-bloco-title:hover {
+  color: #562968;
+}
+
+.li-view {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.avaliacao-tarefa-item h5 {
+  margin: 0;
+}
+
+.avaliacao-tarefa-item p {
+  margin: 5px 0;
+}
+body, .avaliacao-view {
+  font-family: Helvetica, Arial, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.avaliacao-title {
+  font-weight: bold;
+  color: #562968;
+  font-size: 2rem;
+}
+
+.avaliacao-card {
+  border: none;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.avaliacao-bloco-title {
+  font-size: 1.5rem;
+  color: #562968;
+}
+
+.ava-view {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+}
+
+.li-view {
+  padding: 10px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.li-view h5 {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.li-view p {
+  margin: 5px 0;
+  line-height: 1.5;
+}
+
+.li-view strong {
+  color: #562968;
+}
+
+.avaliacao-view-loading,
+.avaliacao-view-error {
+  font-size: 1.2rem;
+  text-align: center;
+  color: #999;
+  margin-top: 20px;
+}
+
+.avaliacao-tarefas-list {
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  animation: slide-down 0.3s ease-in-out;
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

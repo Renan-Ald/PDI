@@ -1,6 +1,34 @@
 .App {
   text-align: center;
 }
+/* Garante que o layout ocupe 100% da altura da janela */
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Configuração do contêiner principal */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Altura mínima para preencher a tela */
+}
+
+/* Conteúdo principal ocupa o espaço disponível */
+.main-content {
+  flex: 1; /* Garante que o conteúdo principal expanda para ocupar o espaço */
+  padding: 20px; /* Opcional */
+}
+
+/* Rodapé */
+footer.footer-main {
+  background-color: #f8f9fa;
+  padding: 20px 0;
+  text-align: center;
+  position: relative; /* Não fixo, mas no final */
+}
 
 .App-logo {
   height: 40vmin;

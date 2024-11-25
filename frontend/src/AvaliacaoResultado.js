@@ -3,6 +3,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import api from './api';
 import AuthContext from './AuthContext';
 import './AvaliacaoResultado.css';
+
 const AvaliacaoResultado = () => {
   const { id } = useParams();
   const { profissional } = useContext(AuthContext);
@@ -93,6 +94,7 @@ const AvaliacaoResultado = () => {
     const novoBloco = {
       descricao: `Bloco ${blocos.length + 1}`,
       tarefas: [],
+      isNew: true, // Flag para identificar novos blocos
     };
     setBlocos([...blocos, novoBloco]);
   };
@@ -103,6 +105,7 @@ const AvaliacaoResultado = () => {
       prazo_registro: '',
       descricao: '',
       aprendizado: '',
+      isNew: true, // Flag para identificar novas tarefas
     };
     const novosBlocos = [...blocos];
     novosBlocos[index].tarefas.push(novaTarefa);
@@ -127,6 +130,11 @@ const AvaliacaoResultado = () => {
   };
 
   const handleSubmitBloco = async (bloco, resultadoId) => {
+    if (bloco.idbloco) {
+      // Bloco já existe, não precisa criar
+      return bloco.idbloco;
+    }
+
     try {
       const response = await api.post('blocos/', {
         descricao: bloco.descricao,
@@ -148,37 +156,44 @@ const AvaliacaoResultado = () => {
   };
 
   const handleSubmitTarefa = async (tarefa, blocoId) => {
-    try {
-      if (!tarefa.tarefa || !tarefa.prazo_registro || !tarefa.aprendizado) {
-        throw new Error('Todos os campos obrigatórios devem ser preenchidos.');
-      }
-      const response = await api.post('tarefas/', {
-        tarefa: tarefa.tarefa,
-        prazo_registro: tarefa.prazo_registro,
-        descricao: tarefa.descricao,
-        aprendizado: tarefa.aprendizado,
-        bloco_id: blocoId,
-      }, {
-        headers: {
-          Authorization: `Bearer ${profissional.token}`,
-        },
-      });
+    if (tarefa.isNew) {
+      try {
+        if (!tarefa.tarefa || !tarefa.prazo_registro || !tarefa.aprendizado) {
+          throw new Error('Todos os campos obrigatórios devem ser preenchidos.');
+        }
+        const response = await api.post('tarefas/', {
+          tarefa: tarefa.tarefa,
+          prazo_registro: tarefa.prazo_registro,
+          descricao: tarefa.descricao,
+          aprendizado: tarefa.aprendizado,
+          bloco_id: blocoId,
+        }, {
+          headers: {
+            Authorization: `Bearer ${profissional.token}`,
+          },
+        });
 
-      console.log('Tarefa criada:', response.data);
-    } catch (error) {
-      console.error('Erro ao criar tarefa:', error);
+        console.log('Tarefa criada:', response.data);
+      } catch (error) {
+        console.error('Erro ao criar tarefa:', error);
+      }
     }
   };
 
   const handleSave = async () => {
     for (let i = 0; i < blocos.length; i++) {
-      const blocoId = await handleSubmitBloco(blocos[i], resultado.idresultado);
+      const bloco = blocos[i];
+      const blocoId = await handleSubmitBloco(bloco, resultado.idresultado);
       if (!blocoId) {
         console.error('Erro ao criar bloco, interrompendo a criação de tarefas.');
         return;
       }
-      for (let j = 0; j < blocos[i].tarefas.length; j++) {
-        await handleSubmitTarefa(blocos[i].tarefas[j], blocoId);
+
+      for (let j = 0; j < bloco.tarefas.length; j++) {
+        const tarefa = bloco.tarefas[j];
+        if (tarefa.isNew || tarefa.tarefa || tarefa.prazo_registro || tarefa.aprendizado) {
+          await handleSubmitTarefa(tarefa, blocoId);
+        }
       }
     }
   };
@@ -192,67 +207,71 @@ const AvaliacaoResultado = () => {
   }
 
   return (
-    <section className="vh-100">
-    <div className='av-result'>
-    <div className="container">
-      <h1 className="mt-4">Avaliação</h1>
-      
-      {avaliacaoDetalhes && (
-        <div className="card mb-4">
-          <div className="card-body">
-            <h2>Detalhes da Avaliação</h2>
-            <p><strong>Formação Técnica:</strong> {avaliacaoDetalhes.formacao_tecnica}</p>
-            <p><strong>Graduação:</strong> {avaliacaoDetalhes.graduacao}</p>
-            <p><strong>Data de Admissão:</strong> {avaliacaoDetalhes.data_admissao}</p>
-          </div>
-        </div>
-      )}
-
-      <h2>Blocos e Tarefas</h2>
-      {blocos.map((bloco, index) => (
-        <div className="card mb-3" key={index}>
-          <div className="card-body">
-            <h3>{bloco.descricao}</h3>
-            {bloco.tarefas.map((tarefa, tarefaIndex) => (
-              <div className="mb-3" key={tarefaIndex}>
-                <input
-                  type="text"
-                  className=" registro form-control mb-2"
-                  placeholder="Tarefa"
-                  value={tarefa.tarefa}
-                  onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'tarefa', e.target.value)}
-                />
-                <input
-                  type="date"
-                  className="form-control mb-2"
-                  placeholder="realizado"
-                  value={tarefa.prazo_registro ? tarefa.prazo_registro.slice(0, 10) : ''}
-                  onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'prazo_registro', e.target.value)}
-                />
-                  <textarea
-                    className="form-control mb-2"
-                    placeholder="Descrição"
-                    value={tarefa.descricao}
-                    onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'descricao', e.target.value)}
-                    rows={4} // Ajuste o número de linhas conforme necessário
-                  ></textarea>
-                <input
-                  type="text"
-                  className="form-control mb-2"
-                  placeholder="Aprendizado"
-                  value={tarefa.aprendizado}
-                  onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'aprendizado', e.target.value)}
-                />
+    <section className="vh-1001">
+      <div className='av-result'>
+        <div className="container">
+          <h1 className="mt-4">Avaliação</h1>
+          {avaliacaoDetalhes && (
+            <div className="card mb-4">
+              <div className="card-body">
+                <h2>Detalhes da Avaliação</h2>
+                <p><strong>Formação Técnica:</strong> {avaliacaoDetalhes.formacao_tecnica}</p>
+                <p><strong>Graduação:</strong> {avaliacaoDetalhes.graduacao}</p>
+                <p><strong>Data de Admissão:</strong> {avaliacaoDetalhes.data_admissao}</p>
               </div>
-            ))}
-            <button className="btn btn-primary" onClick={() => handleAddTarefa(index)}>Adicionar Tarefa</button>
-          </div>
+            </div>
+          )}
+          <h2>Blocos e Tarefas</h2>
+          {blocos.map((bloco, index) => (
+            <div className="card mb-3" key={index}>
+              <div className="card-body">
+                <h3>{bloco.descricao}</h3>
+                {bloco.tarefas.map((tarefa, tarefaIndex) => (
+                  <div className="mb-3" key={tarefaIndex}>
+                    <input
+                      type="text"
+                      className="form-control mb-2"
+                      placeholder="Tarefa"
+                      value={tarefa.tarefa}
+                      onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'tarefa', e.target.value)}
+                    />
+                    <input
+                      type="date"
+                      className="form-control mb-2"
+                      value={tarefa.prazo_registro ? tarefa.prazo_registro.split('T')[0] : ''}
+                      onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'prazo_registro', e.target.value)}
+                    />
+                    <textarea
+                      className="form-control mb-2"
+                      placeholder="Descrição"
+                      value={tarefa.descricao}
+                      onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'descricao', e.target.value)}
+                    />
+                    <textarea
+                      className="form-control mb-2"
+                      placeholder="Aprendizado"
+                      value={tarefa.aprendizado}
+                      onChange={(e) => handleChangeTarefa(index, tarefaIndex, 'aprendizado', e.target.value)}
+                    />
+                  </div>
+                ))}
+                <button
+                  className="btn btn-outline-primary mb-3"
+                  onClick={() => handleAddTarefa(index)}
+                >
+                  Adicionar Tarefa
+                </button>
+              </div>
+            </div>
+          ))}
+          <button className="btn btn-primary" onClick={handleAddBloco}>
+            Adicionar Bloco
+          </button>
+          <button className="btn btn-success mt-4" onClick={handleSave}>
+            Salvar
+          </button>
         </div>
-      ))}
-      <button className="btn btn-success" onClick={handleAddBloco}>Adicionar Bloco</button>
-      <button className="btn btn-primary mt-3" onClick={handleSave}>Salvar</button>
-    </div>
-    </div>
+      </div>
     </section>
   );
 };

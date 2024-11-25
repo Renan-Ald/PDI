@@ -108,17 +108,19 @@ const Header = () => {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ml-auto">
               <li className="nav-item">
-                <Link className="nav-link" to="/">Home</Link>
+                
+                <Link className="nav-link" to="/"> <i class="bi bi-house"></i> Home</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/register">Register</Link>
+                <Link className="nav-link" to="/register">
+                <i className="bi bi-person-plus"></i> Registro</Link>
               </li>
               <li className="nav-item">
                 <button
                   className="btn nav-link position-relative"
                   onClick={handleCartClick}
-                >
-                  <i className="bi bi-cart-fill"></i>
+                > 
+                  <i className="bi bi-cart"></i> Carrinho
                   {cartItemCount > 0 && (
                     <span className="cart-indicator">
                       {cartItemCount}

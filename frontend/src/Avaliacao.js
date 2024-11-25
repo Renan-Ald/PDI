@@ -278,7 +278,7 @@ const createResult = async (resultData) => {
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <div className="modal-body">
+                <div className="modal-body modal-body-scrollable">
                   <p><strong>Serviço:</strong> {selectedPagamento.servico.nome}</p>
                   <form onSubmit={handleSubmit}>
                   <div className="form-group mt-3">

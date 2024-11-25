@@ -34,6 +34,7 @@ const Profile = () => {
   }
 
   return (
+    <section className='vh-1004'>
     <div className="profile col-md-12">
       <link
         rel="stylesheet"
@@ -99,6 +100,7 @@ const Profile = () => {
         </div>
       </div>
     </div>
+    </section>
   );
 };
 

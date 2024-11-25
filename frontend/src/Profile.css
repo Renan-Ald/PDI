@@ -110,3 +110,6 @@ h2.h5.mb-0 {
 .profile{
     background-color: white;
 }
+.vh-1004{
+  height: auto !important;
+}

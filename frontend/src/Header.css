@@ -78,7 +78,7 @@
 .cart-indicator {
   position: absolute;
   top: 4px; /* Aumente este valor para mover a bolinha para cima */
-  right: 4px; /* Aumente este valor para mover a bolinha para a esquerda */
+  left: 9px; /* Aumente este valor para mover a bolinha para a esquerda */
   background-color: red;
   color: white;
   border-radius: 50%; /* Faz o fundo ser um círculo */

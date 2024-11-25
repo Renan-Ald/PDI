@@ -11,6 +11,7 @@ const AvaliacaoView = () => {
   const [blocos, setBlocos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [blocoAberto, setBlocoAberto] = useState(null); // Controla qual bloco está aberto
 
   useEffect(() => {
     const fetchResultado = async () => {
@@ -45,7 +46,11 @@ const AvaliacaoView = () => {
           },
         });
 
-        const blocosComTarefas = await Promise.all(response.data.map(async (bloco) => {
+        const blocosUnicos = response.data.filter((bloco, index, self) =>
+          index === self.findIndex((b) => b.idbloco === bloco.idbloco)
+        );
+
+        const blocosComTarefas = await Promise.all(blocosUnicos.map(async (bloco) => {
           const tarefasResponse = await api.get(`tarefas/?bloco_id=${bloco.idbloco}`, {
             headers: {
               Authorization: `Bearer ${profissional.token}`,
@@ -67,6 +72,10 @@ const AvaliacaoView = () => {
     fetchResultado();
   }, [id, profissional.token]);
 
+  const toggleBloco = (index) => {
+    setBlocoAberto(blocoAberto === index ? null : index);
+  };
+
   if (loading) {
     return <p className="avaliacao-view-loading">Carregando...</p>;
   }
@@ -76,30 +85,54 @@ const AvaliacaoView = () => {
   }
 
   return (
-    <section className='vh-100'>
-    <div className="avaliacao-view">
-      <div className="avaliacao-container mt-5">
-        <h2 className="avaliacao-title text-center mb-4">Visualização da Avaliação</h2>
+    <section className="vh-1002">
+      <div className="avaliacao-view">
+        <div className="avaliacao-container mt-5">
+          <h2 className="avaliacao-title text-center mb-4">Visualização da Avaliação</h2>
 
-        {blocos.map((bloco, index) => (
-          <div className="avaliacao-card card mb-4 shadow-sm" key={index}>
-            <div className="ava-view card-body">
-              <h3 className="avaliacao-bloco-title card-title">{bloco.descricao}</h3>
-              <ul className=" li-view avaliacao-tarefas list-group list-group-flush">
-                {bloco.tarefas.map((tarefa, tarefaIndex) => (
-                  <li className=" li-view avaliacao-tarefa-item" key={tarefaIndex}>
-                    <h5>{tarefa.tarefa}</h5>
-                    <p><strong>Prazo:</strong> {new Date(tarefa.prazo_registro).toLocaleDateString()}</p>
-                    <p><strong>Descrição:</strong> {tarefa.descricao}</p>
-                    <p><strong>Aprendizado:</strong> {tarefa.aprendizado}</p>
-                  </li>
-                ))}
-              </ul>
+          {blocos.map((bloco, index) => (
+            <div className="avaliacao-card card mb-4 shadow-sm" key={index}>
+              <div className="ava-view card-body">
+                <h3
+                  className="avaliacao-bloco-title card-title d-flex justify-content-between align-items-center"
+                  onClick={() => toggleBloco(index)} // Alterna o bloco aberto
+                  style={{ cursor: 'pointer' }}
+                >
+                  {bloco.descricao}
+                  <i
+                    className={`bi ${
+                      blocoAberto === index
+                        ? 'bi-chevron-double-up'
+                        : 'bi-chevron-double-down'
+                    }`}
+                    style={{ fontSize: '1.2rem', color: '#562968' }}
+                  ></i>
+                </h3>
+                {blocoAberto === index && (
+                    <ul className="avaliacao-tarefas-list">
+                      {bloco.tarefas.map((tarefa, tarefaIndex) => (
+                        <li className="li-view avaliacao-tarefa-item" key={tarefaIndex}>
+                          <h5>{tarefa.tarefa}</h5>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                            <p><strong>Prazo:</strong> {new Date(tarefa.prazo_registro).toLocaleDateString()}</p>
+                            <p><strong>Descrição:</strong>
+                              {tarefa.descricao.split('. ').map((frase, index) => (
+                                <p key={index} style={{ textAlign: 'justify', marginBottom: '10px' }}>
+                                  {frase.trim()}{index !== tarefa.descricao.split('. ').length - 1 ? '.' : ''}
+                                </p>
+                              ))}
+                            </p>
+                          </div>
+                          <p><strong>Aprendizado:</strong> {tarefa.aprendizado}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
     </section>
   );
 };
