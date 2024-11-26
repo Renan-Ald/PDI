@@ -30,7 +30,7 @@
 .hero-description {
   font-size: 1.125rem;
   margin-bottom: 30px;
-  color: #fff; /* Texto em cinza claro */
+  color: white !important; /* Texto em cinza claro */
 }
 
 .hero-image {
@@ -41,6 +41,9 @@
   max-width: 100%;
   height: auto;
   display: block;
+  border-radius: 20px; /* Borda arredondada */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Sombra sutil */
+  overflow: hidden; /* Garante que o conteúdo siga o border-radius */
 }
 /* sub- home */
 /* Estilo para a seção */
@@ -141,6 +144,9 @@ section {
 
 /* Estilos para a seção hero */
 .hero {
+  background-image: url('./img/home_2.jpg');
+  background-position: center;
+  background-size: cover;
   padding-top: 70px;
   display: flex;
   align-items: center;
@@ -189,8 +195,18 @@ section {
 .btn-primary {
   background-color: #562968 !important;
   border-color: #562968 !important;
+  width: 300px;
+  
 }
-
+.Manager{
+  max-width: 100%;
+  border-radius: 30px;
+}
+.Validation{
+  max-width: 100%;
+  border-radius: 30px;
+  right: 30px;
+}
 .btn-primary:hover {
   background-color: #5e163b; /* Azul claro ao passar o mouse */
 }

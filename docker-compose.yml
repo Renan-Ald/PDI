@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   db:
@@ -28,6 +27,11 @@ services:
       MYSQL_DB: pdi_db
       MYSQL_USER: pdi_user
       MYSQL_PASSWORD: pdi_password
+    deploy:
+      resources:
+        limits:
+          memory: 512M  # Limita a memória para 512MB
+          cpus: '1.0'   # Limita o uso da CPU para 1 núcleo
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -50,6 +54,11 @@ services:
       - "3000:3000"
     depends_on:
       - web
+    deploy:
+      resources:
+        limits:
+          memory: 256M  # Limita a memória para 256MB
+          cpus: '0.5'   # Limita o uso da CPU para 50% de um núcleo
 
 volumes:
   mysql_data:

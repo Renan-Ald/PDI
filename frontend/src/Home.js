@@ -1,11 +1,11 @@
 // src/Home.js
 import React, { useState, useEffect } from 'react';
 import { fetchServices, addToCart } from './api';
-import heroImg from './img/hero-img.png';
+import heroImg from './img/home_4.jpg';
 import tick from './img/tick.png';
-import validation from './img/validation.png';
+import validation from './img/carer.jpg';
 import marketer from './img/marketer.png';
-import manager from './img/manager.png';
+import manager from './img/pdi.webp';
 import './Home.css';
 
 const Home = () => {
@@ -47,7 +47,7 @@ const Home = () => {
                 Fugit accusantium nulla quis atque consequuntur culpa ad voluptates pariatur magni ducimus fugiat et libero<br />
                 your next user experience.
               </p>
-                <a className="btn btn-primary btn-pulse" href="#products">Ver Produtos</a>
+                <a className="btn btn-primary btn-pulse" href="#products">COMPRE AGORA</a>
             </div>
             <div className="hero-image">
               <img src={heroImg} alt="Hero" />
@@ -80,7 +80,7 @@ const Home = () => {
               <p>If you are looking for a new way to promote your business<br />that won't cost you more money,</p>
             </div>
             <div className="validation-image">
-              <img src={validation} alt="Validation" />
+              <img className='Validation'src={validation} alt="Validation" />
             </div>
           </div>
         </div>
@@ -90,7 +90,7 @@ const Home = () => {
         <div className="container">
           <div className="manager-content">
             <div className="manager-image">
-              <img src={manager} alt="Manager" />
+              <img className='Manager' src={manager} alt="Manager" />
             </div>
             <div className="manager-text">
               <h5>Easier decision making for</h5>
