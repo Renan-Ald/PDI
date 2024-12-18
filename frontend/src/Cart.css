@@ -4,10 +4,14 @@
     padding: 20px; /* Adiciona um espaçamento interno */
     border-radius: 8px; /* Arredonda os cantos do contêiner */
 }
-.plus{
-    background-color: #333 !important;
-    color: black;
-    border-color: #333;
+.cart{
+  background-image: url('./img/Plano-de-carreira-trabalhe-com-um-coach.webp');
+  background-position: center;
+  background-size: cover;
+  padding-top: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 /* Adiciona cor de fundo nas linhas da lista */
 .list-group-item {
@@ -15,11 +19,11 @@
     border: none; /* Remove bordas */
 }
 .bi{
-    color: wheat;
+    color: wheat ;
 }
 .text-cart{
     color:#464646 !important;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Times New Roman', Times, serif;
 }
 /* Estilo das letras dentro da lista */
 .list-group-item h5,
@@ -29,3 +33,69 @@
 .vh-100{
     height: auto !important;
 }
+/* Remover fundo cinza ao passar o mouse */
+.btn-link {
+    background-color: transparent !important;
+    border: none;
+    padding: 0;
+  }
+  
+  .btn-link:hover {
+    background-color: transparent !important; /* Garante que não fique cinza */
+    color: #6c757d; /* Um cinza mais agradável */
+    text-decoration: none;
+  }
+  
+  /* Ajuste do tamanho e estilo dos ícones */
+  .fas {
+    font-size: 10px; /* Diminui o tamanho dos ícones */
+    color: #6c757d; /* Cinza mais agradável */
+    cursor: pointer;
+  }
+  
+  .fas:hover {
+    color: #495057; /* Um tom mais escuro ao passar o mouse */
+  }
+  
+  /* Ajuste para o botão de remover (x) */
+  .btn-link.text-muted i {
+    font-size: 10px; /* Diminui o tamanho do 'x' */
+    color: #6c757d;
+  }
+  
+  .btn-link.text-muted i:hover {
+    color: #495057; /* Um tom mais escuro ao passar o mouse */
+  }
+  
+  input.form-control-sm {
+    max-width: 30px; /* Define a largura */
+    height: 40px; /* Altura para garantir espaço adequado */
+    text-align: center; /* Centraliza horizontalmente */
+    font-size: 14px; /* Tamanho do texto */
+    line-height: 30px; /* Faz o texto se alinhar verticalmente com a altura */
+    padding: 0; /* Remove qualquer padding interno */
+    margin: 0; /* Remove margem extra */
+    box-sizing: border-box; /* Garante que bordas e padding não afetam as dimensões */
+  }
+  /* Ajuste do botão "Finalizar Compra" */
+.btn-finalizar-compra {
+    background-color: #28a745; /* Cor verde para o botão */
+    color: white; /* Cor do texto */
+    padding: 8px 16px; /* Ajuste do tamanho do botão */
+    font-size: 14px; /* Tamanho do texto */
+    border: none; /* Remove borda */
+    border-radius: 5px; /* Arredonda os cantos */
+    cursor: pointer; /* Mostra o cursor de clique */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Suaviza a animação no hover */
+    width: 200px !important;
+  }
+  
+  /* Estilo no hover do botão */
+  .btn-finalizar-compra:hover {
+    background-color: #218838; /* Tom mais escuro de verde */
+    transform: scale(1.05); /* Leve aumento no tamanho ao passar o mouse */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adiciona sombra para destacar */
+  }
+  
+  
+  

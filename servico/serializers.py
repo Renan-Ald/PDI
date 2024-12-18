@@ -9,7 +9,7 @@ class ServicoSerializer(serializers.ModelSerializer):
 class ServicoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Servico
-        fields = ['id', 'nome', 'descricao', 'valor']
+        fields = '__all__'
 
 class DetalhePedidoSerializer(serializers.ModelSerializer):
     servico = serializers.PrimaryKeyRelatedField(queryset=Servico.objects.all())

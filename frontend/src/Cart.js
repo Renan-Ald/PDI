@@ -21,7 +21,10 @@ const Cart = () => {
 
   useEffect(() => {
     const calculateTotal = () => {
-      const totalValue = cartItems.reduce((sum, item) => sum + item.servico.valor * item.quantidade, 0);
+      const totalValue = cartItems.reduce(
+        (sum, item) => sum + item.servico.valor * item.quantidade,
+        0
+      );
       setTotal(totalValue);
     };
 
@@ -36,9 +39,11 @@ const Cart = () => {
 
     try {
       await updateCartItem(id, { quantidade, servico_id });
-      setCartItems(cartItems.map(item =>
-        item.id === id ? { ...item, quantidade } : item
-      ));
+      setCartItems(
+        cartItems.map((item) =>
+          item.id === id ? { ...item, quantidade } : item
+        )
+      );
     } catch (error) {
       console.error('Erro ao atualizar quantidade:', error);
     }
@@ -56,7 +61,7 @@ const Cart = () => {
   const handleRemoveItem = async (id, servico_id) => {
     try {
       await deleteCartItem(id, servico_id);
-      setCartItems(cartItems.filter(item => item.id !== id));
+      setCartItems(cartItems.filter((item) => item.id !== id));
     } catch (error) {
       console.error('Erro ao remover item do carrinho:', error);
     }
@@ -65,55 +70,133 @@ const Cart = () => {
   const formatCurrency = (value) => {
     return value.toLocaleString('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     });
   };
 
   return (
-    <section className='vh-100'>
-      <div id='cart' className="container mt-5 cart-background">
-        <h1 className="mb-4 text-center text-cart">Meu Carrinho</h1>
-        <h3 className="mb-4 text-center text-cart">Total: {formatCurrency(total)}</h3>
-        <ul className="list-group mb-3 cart-background">
-          {cartItems.map(item => (
-            <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center cart-background shadow-sm">
-              <div>
-                <h5 className="text-cart font-weight-bold">{item.servico.nome}</h5>
-                <p className="text-cart">{item.servico.descricao}</p>
-                <p className="text-cart">Preço: {formatCurrency(item.servico.valor)}</p>
+    <section className="h-100 h-custom cart ">
+      <div className="container py-5 h-100">
+        <div className="row d-flex justify-content-center align-items-center h-100">
+          <div className="col-12">
+            <div
+              className="card card-registration card-registration-2"
+              style={{ borderRadius: '1px' }}
+            >
+              <div className="card-body p-0">
+                <div className="row g-0">
+                  <div className="col-lg-8">
+                    <div className="p-5">
+                      <div className="d-flex justify-content-between align-items-center mb-5">
+                        <h1 className="fw-bold mb-0">Meu Carrinho</h1>
+                        <h6 className="mb-0 text-muted">
+                          {cartItems.length} itens
+                        </h6>
+                      </div>
+                      <hr className="my-4" />
+
+                      {cartItems.map((item) => (
+                        <div
+                          key={item.id}
+                          className="row mb-4 d-flex justify-content-between align-items-center"
+                        >
+                          {/* <div className="col-md-2 col-lg-2 col-xl-2">
+                            <img
+                              src="https://via.placeholder.com/150"
+                              className="img-fluid rounded-3"
+                              alt={item.servico.nome}
+                            />
+                          </div> */}
+                          <div className="col-md-3 col-lg-3 col-xl-3">
+                            <h6 className="text-muted">
+                              {item.servico.descricao}
+                            </h6>
+                            <h6 className="mb-0">{item.servico.nome}</h6>
+                          </div>
+                          <div className="col-md-3 col-lg-3 col-xl-2 d-flex">
+                            <button
+                              className="btn btn-link px-2"
+                              onClick={() =>
+                                handleUpdateQuantity(
+                                  item.id,
+                                  item.quantidade - 1,
+                                  item.servico.id
+                                )
+                              }
+                            >
+                              <i className="fas fa-minus"></i>
+                            </button>
+
+                            <input
+                              min="1"
+                              value={item.quantidade}
+                              type="number"
+                              readOnly
+                              className="form-control form-control-sm"
+                            />
+
+                            <button
+                              className="btn btn-link px-2"
+                              onClick={() =>
+                                handleUpdateQuantity(
+                                  item.id,
+                                  item.quantidade + 1,
+                                  item.servico.id
+                                )
+                              }
+                            >
+                              <i className="fas fa-plus "></i>
+                            </button>
+                          </div>
+                          <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                            <h6 className="mb-0">
+                              {formatCurrency(item.servico.valor)}
+                            </h6>
+                          </div>
+                          <div className="col-md-1 col-lg-1 col-xl-1 text-end">
+                            <button
+                              className="btn btn-link text-muted"
+                              onClick={() =>
+                                handleRemoveItem(item.id, item.servico.id)
+                              }
+                            >
+                              <i className="fas fa-times "></i>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+
+                      <hr className="my-4" />
+
+                      <div className="pt-5">
+                        <h6 className="mb-0">
+                          Total: <strong>{formatCurrency(total)}</strong>
+                        </h6>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 bg-grey">
+                    <div className="p-5">
+                      <h3 className="fw-bold mb-5">Resumo</h3>
+                      <h6 className="text-muted">
+                        Total: <strong>{formatCurrency(total)}</strong>
+                      </h6>
+                      <button
+                        className=" btn-finalizar-compra btn btn-primary btn-lg mt-4 "
+                        onClick={handleCheckout}
+                      >
+                        Finalizar Compra
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="d-flex align-items-center">
-                <button
-                  className="btn btn-light plus btn-sm"
-                  onClick={() => handleUpdateQuantity(item.id, item.quantidade + 1, item.servico.id)}
-                >
-                  <i className="bi bi-plus-circle"></i>
-                </button>
-                <span className="mx-3">{item.quantidade}</span>
-                <button
-                  className="btn btn-light plus btn-sm"
-                  onClick={() => handleUpdateQuantity(item.id, item.quantidade - 1, item.servico.id)}
-                >
-                  <i className="bi bi-dash-circle"></i>
-                </button>
-                <button
-                  className="btn btn-danger ml-3 btn-sm"
-                  onClick={() => handleRemoveItem(item.id, item.servico.id)}
-                >
-                  <i className="bi bi-trash"></i>
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-        <div className="text-center">
-          <button className="btn btn-primary btn-lg" onClick={handleCheckout}>
-            Finalizar Compra
-          </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
-  );  
+  );
 };
 
 export default Cart;

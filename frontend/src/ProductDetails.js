@@ -60,7 +60,7 @@ const ProductDetails = () => {
       <div className="product-content">
         <div className="details reveal">
           <h2 className="text-produto">{service.nome}</h2>
-          <p className="text-produto">{service.descricao}</p>
+          <p className="text-produto">{service.descricao_longo}</p>
           <h4 className="text-produto">Preço: R$ {service.valor}</h4>
           <div className="about">
             <h3>Por que escolher este serviço?</h3>

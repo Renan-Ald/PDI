@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 class Servico(models.Model):
     nome = models.CharField(max_length=100)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    descricao = models.TextField()
+    descricao = models.TextField(max_length=30)
+    descricao_longo = models.TextField()
 
     def __str__(self):
         return self.nome
