@@ -266,6 +266,13 @@ export const createAvaliacao = async (avaliacaoData) => {
   }
 };
 ///chat GPT 
+export const fetchServiceDetails = async (id) => {
+  const response = await publicApi.get(`/api/servicos/${id}`);
+  if (!response.ok) {
+    throw new Error('Erro ao buscar detalhes do serviço');
+  }
+  return response.json();
+};
 
 export const analyzeAvaliacao = async (avaliacaoData) => {
   try {

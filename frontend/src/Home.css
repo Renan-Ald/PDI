@@ -264,7 +264,23 @@ section {
   padding: 20px;
   position: relative;
 }
+.btn-cart:hover {
+  background-color: #2980b9; /* Cor mais escura quando passar o mouse */
+  transform: scale(1.05); /* Aumenta ligeiramente o tamanho */
+}
 
+/* Active: muda a cor e aplica um efeito de clique */
+.btn-cart:active {
+  background-color: #1f6fa3; /* Cor mais escura ao clicar */
+  transform: scale(0.98); /* Diminui um pouco o tamanho ao clicar */
+}
+
+/* Quando o mouse passar sobre o cartão de produto (hover) */
+.product-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adiciona sombra para destaque */
+  transform: translateY(-5px); /* Move o cartão levemente para cima */
+  cursor: pointer;
+}
 /* Badge de novo produto */
 .product-badge {
   position: absolute;

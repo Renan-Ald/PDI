@@ -17,7 +17,7 @@ import ForgotPassword from './ForgotPassword';
 import ResetPassword from './RequestResetPassword';
 import RequestResetPassword from './RequestResetPassword';
 import ResetPasswordConfirm from './ResetPasswordConfirm';
-
+import ProductDetails from './ProductDetails';
 function App() {
   const isProfissionalAuthenticated = () => {
     return !!localStorage.getItem('profissionalToken');
@@ -31,6 +31,7 @@ function App() {
           <div className="main-content">
             <Switch>
               <Route path="/" exact component={Home} />
+              <Route path="/produto/:id" component={ProductDetails} /> 
               <Route path="/login" component={Login} />
               <Route path="/register" component={Register} />
               <Route path="/request-reset-password" component={RequestResetPassword} />

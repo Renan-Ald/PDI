@@ -18,7 +18,7 @@ const Avaliacao = () => {
   const [dataAdmissao, setDataAdmissao] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [avaliacao, setAvaliacao] = useState(null);
-
+  const [errors, setErrors] = useState({});
   useEffect(() => {
     const fetchPagamentos = async () => {
       try {
@@ -71,12 +71,24 @@ const Avaliacao = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const newErrors = {};
+    if (!formacaoTecnica.trim()) newErrors.formacaoTecnica = 'Este campo é obrigatório.';
+    if (!graduacao.trim()) newErrors.graduacao = 'Este campo é obrigatório.';
+    if (!posgraduacao.trim()) newErrors.posgraduacao = 'Este campo é obrigatório.';
+    if (!formacaoComplementar.trim()) newErrors.formacaoComplementar = 'Este campo é obrigatório.';
+    if (!cargoDesejado.trim()) newErrors.cargoDesejado = 'Este campo é obrigatório.';
+    if (!nucleoDeTrabalho.trim()) newErrors.nucleoDeTrabalho = 'Este campo é obrigatório.';
+    if (!dataAdmissao.trim()) newErrors.dataAdmissao = 'Este campo é obrigatório.';
     if (!selectedPagamento) {
       alert('Por favor, selecione um pagamento primeiro.');
       return;
     }
-
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors); // Define os erros
+      return; // Interrompe o envio do formulário
+    }
+  
+    setErrors({});
     const userId = selectedPagamento.usuario;
     const servicoId = selectedPagamento.servico.id;
     const pagamentoId = selectedPagamento.id;
@@ -245,7 +257,7 @@ const createResult = async (resultData) => {
                         className="btn btn-primary"
                         onClick={() => handlePagamentoSelect(pagamento)}
                       >
-                        Avaliar
+                        Preencher Dados
                       </button>
                     </td>
                     <td>
@@ -284,30 +296,37 @@ const createResult = async (resultData) => {
                   <div className="form-group mt-3">
                     <label htmlFor="formacaoTecnica">Formação Técnica:</label>
                     <input type="text" className="form-control" value={formacaoTecnica} onChange={(e) => setFormacaoTecnica(e.target.value)} />
+                    {errors.formacaoTecnica && <small className="text-danger">{errors.formacaoTecnica}</small>}
                   </div>
                   <div className="form-group mt-3">
                     <label htmlFor="graduacao">Graduação:</label>
                     <input type="text" className="form-control" value={graduacao} onChange={(e) => setGraduacao(e.target.value)} />
+                    {errors.graduacao && <small className="text-danger">{errors.graduacao}</small>}
                   </div>
                   <div className="form-group mt-3">
                     <label htmlFor="posgraduacao">Pós-graduação:</label>
                     <input type="text" className="form-control" value={posgraduacao} onChange={(e) => setPosgraduacao(e.target.value)} />
+                    {errors.posgraduacao && <small className="text-danger">{errors.posgraduacao}</small>}
                   </div>
                   <div className="form-group mt-3">
                     <label htmlFor="formacaoComplementar">Formação Complementar:</label>
                     <input type="text" className="form-control" value={formacaoComplementar} onChange={(e) => setFormacaoComplementar(e.target.value)} />
+                    {errors.formacaoComplementar && <small className="text-danger">{errors.formacaoComplementar}</small>}
                   </div>
                   <div className="form-group mt-3">
                     <label htmlFor="cargoDesejado">Cargo Desejado:</label>
                     <input type="text" className="form-control" value={cargoDesejado} onChange={(e) => setCargoDesejado(e.target.value)} />
+                    {errors.cargoDesejado && <small className="text-danger">{errors.cargoDesejado}</small>}
                   </div>
                   <div className="form-group mt-3">
                     <label htmlFor="nucleoDeTrabalho">Núcleo de Trabalho:</label>
                     <input type="text" className="form-control" value={nucleoDeTrabalho} onChange={(e) => setNucleoDeTrabalho(e.target.value)} />
+                    {errors.nucleoDeTrabalho && <small className="text-danger">{errors.nucleoDeTrabalho}</small>}
                   </div>
                   <div className="form-group mt-3">
                     <label htmlFor="dataAdmissao">Data de Admissão:</label>
                     <input type="date" className="form-control" value={dataAdmissao} onChange={(e) => setDataAdmissao(e.target.value)} />
+                    {errors.dataAdmissao && <small className="text-danger">{errors.dataAdmissao}</small>}
                   </div>
                   <div className="modal-footer">
                     <button type="submit" className="btn btn-success">Salvar Avaliação</button>

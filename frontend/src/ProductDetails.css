@@ -1,0 +1,77 @@
+/* Layout Principal */
+.product-details-container {
+    display: flex;
+    height: 100vh;
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+  /* Metade Esquerda: Imagem */
+  .product-image {
+    flex: 1;
+    background: url('./img/home_1.jpg') no-repeat center center/cover;
+    position: relative;
+  }
+  
+  .product-image .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+  }
+  
+  /* Metade Direita: Conteúdo */
+  .product-content {
+    flex: 1;
+    padding: 3rem;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .details h2 {
+    font-size: 2.5rem;
+  }
+  
+  .details p {
+    font-size: 1.2rem;
+    margin: 1rem 0;
+  }
+  .text-produto{
+    color: #111111;
+    font-family: 'Times New Roman', Times, serif;
+  }
+  .about {
+    margin-top: 2rem;
+  }
+  
+  .about h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .about p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #6c757d;
+  }
+  
+  /* Botão Voltar */
+  .back-button {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .back-button i {
+    font-size: 1.2rem;
+  }
+  

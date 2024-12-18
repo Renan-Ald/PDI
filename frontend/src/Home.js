@@ -1,5 +1,5 @@
-// src/Home.js
 import React, { useState, useEffect } from 'react';
+import ScrollReveal from 'scrollreveal';
 import { fetchServices, addToCart } from './api';
 import heroImg from './img/home_4.jpg';
 import tick from './img/tick.png';
@@ -7,14 +7,27 @@ import validation from './img/carer.jpg';
 import marketer from './img/marketer.png';
 import manager from './img/pdi.webp';
 import './Home.css';
-
+import { useHistory } from 'react-router-dom';
 const Home = () => {
   const [services, setServices] = useState([]);
+  const history = useHistory();
 
   useEffect(() => {
+    // Configuração do ScrollReveal
+    ScrollReveal().reveal(
+      '.hero, .sub-home-list li, .section-validation, .section-manager, .section-products, .section-marketer',
+      {
+        distance: '50px',
+        duration: 1000,
+        easing: 'ease-out',
+        origin: 'bottom',
+        interval: 200, // Intervalo entre os elementos
+      }
+    );
+
     const fetchServicesData = async () => {
       try {
-        const data = await fetchServices();
+        const data = await fetchServices(); // API para buscar serviços
         setServices(data);
       } catch (error) {
         console.error('Erro ao buscar serviços:', error);
@@ -24,17 +37,28 @@ const Home = () => {
     fetchServicesData();
   }, []);
 
+  const handleProductClick = (serviceId) => {
+    history.push(`/produto/${serviceId}`);
+  };
   const handleAddToCart = async (servicoId) => {
     try {
       const response = await addToCart(servicoId, 1); // Quantidade padrão de 1
       console.log('Resposta da API ao adicionar ao carrinho:', response);
       alert('Serviço adicionado ao carrinho!');
-
     } catch (error) {
-      console.error('Erro ao adicionar ao carrinho:', error.response?.data || error.message);
+      console.error(
+        'Erro ao adicionar ao carrinho:',
+        error.response?.data || error.message
+      );
     }
   };
 
+  const formatCurrency = (value) => {
+    return value.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+  };
   return (
     <div id='topo' className="home">
       <section  className="hero">
@@ -116,24 +140,36 @@ const Home = () => {
       </section>
 
       <section className="section-products" id="products">
-    <div className="container">
-      <div className="section-header">
-        <h1>Produtos</h1>
-      </div>
-      <div className="product-list">
-        {services.map((service) => (
-          <div className="product-card" key={service.id}>
-            <div className="product-info">
-              <h2 className="product-title">{service.descricao}</h2>
-              <h3 className="product-title">{service.nome}</h3>
-              <h4 className="product-price">R${service.valor}</h4>
-              <a className="btn btn-cart" href="#topo" onClick={() => handleAddToCart(service.id)}>Comprar</a> {/* Botão com gradiente */}
-            </div>
+        <div className="container">
+          <div className="section-header">
+            <h1>Produtos</h1>
           </div>
-        ))}
-      </div>
-    </div>
-  </section>
+          <div className="product-list">
+            {services.map((service) => (
+              <div
+                className="product-card"
+                key={service.id}
+                onClick={() => handleProductClick(service.id)}
+              >
+                <div className="product-info">
+                  <h2 className="product-title">{service.descricao}</h2>
+                  <h3 className="product-title">{service.nome}</h3>
+                  <h4 className="product-price">R${formatCurrency(service.valor)}</h4>
+                  <button
+                    className="btn btn-cart"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Evita redirecionamento no clique do botão
+                      handleAddToCart(service.id);
+                    }}
+                  >
+                    Comprar
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section className="section-marketer" id="marketer">
         <div className="container">

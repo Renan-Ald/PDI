@@ -243,7 +243,7 @@ const Avaliador = () => {
                               className="btn btn-primary"
                               onClick={() => handleAvaliarClick(servico)}
                             >
-                              Avaliar
+                              Preencher Dados
                             </button>
                           </td>
                         </tr>

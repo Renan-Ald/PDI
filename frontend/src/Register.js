@@ -28,7 +28,6 @@ const Register = () => {
       return;
     }
     try {
-      
       await register({
         email,
         password,
@@ -41,8 +40,10 @@ const Register = () => {
         pais,
         cpf: removeMask(cpf),
       });
+      alert('Cadastro realizado com sucesso!');  // Alerta de sucesso
       history.push('/login'); // Redireciona para a página de login após o registro
     } catch (error) {
+      alert('Cadastro Falhou!, Tente novamente');
       console.error('Erro ao registrar:', error);
     }
   };
@@ -82,17 +83,17 @@ const Register = () => {
               />
             </div>
           </div>
-            <div className="form-group">
-              <label className="formbold-form-label">Email:</label>
-              <input
-                type="email"
-                className="formbold-form-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-          
+          <div className="form-group">
+            <label className="formbold-form-label">Email:</label>
+            <input
+              type="email"
+              className="formbold-form-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+        
           <div className="formbold-input-flex">
             <div className="form-group">
               <label className="formbold-form-label">Senha:</label>

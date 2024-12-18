@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getCartItems, updateCartItem, deleteCartItem, checkout } from './api';
-import './Cart.css'
+import './Cart.css';
+
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -61,46 +62,56 @@ const Cart = () => {
     }
   };
 
+  const formatCurrency = (value) => {
+    return value.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+  };
+
   return (
     <section className='vh-100'>
-    <div id='cart' className="container mt-5 cart-background">
-      <h1 className="mb-4 text-cart">Meu Carrinho</h1>
-      <h3 className="mb-4 text-cart">Total: R${total.toFixed(2)}</h3>
-      <ul className="list-group mb-3 cart-background">
-        {cartItems.map(item => (
-          <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center cart-background">
-            <div>
-              <h5 className="text-cart">{item.servico.nome}</h5>
-              <p className="text-cart">{item.servico.descricao}</p>
-              <p className="text-cart">Preço: R${item.servico.valor}</p>
-            </div>
-            <div className="d-flex align-items-center">
-              <button
-                className="btn btn-light plus "
-                onClick={() => handleUpdateQuantity(item.id, item.quantidade + 1, item.servico.id)}
-              >
-                <i className="bi bi-plus-circle"></i>
-              </button>
-              <span className="mx-3">{item.quantidade}</span>
-              <button
-                className="btn btn-light plus"
-                onClick={() => handleUpdateQuantity(item.id, item.quantidade - 1, item.servico.id)}
-              >
-                <i className="bi bi-dash-circle"></i>
-              </button>
-              <button
-                className="btn btn-danger ml-3"
-                onClick={() => handleRemoveItem(item.id, item.servico.id)}
-              >
-                <i className="bi bi-trash"></i>
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-      <button className="btn btn-primary" onClick={handleCheckout}>Finalizar Compra</button>
-      <br></br>
-    </div>
+      <div id='cart' className="container mt-5 cart-background">
+        <h1 className="mb-4 text-center text-cart">Meu Carrinho</h1>
+        <h3 className="mb-4 text-center text-cart">Total: {formatCurrency(total)}</h3>
+        <ul className="list-group mb-3 cart-background">
+          {cartItems.map(item => (
+            <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center cart-background shadow-sm">
+              <div>
+                <h5 className="text-cart font-weight-bold">{item.servico.nome}</h5>
+                <p className="text-cart">{item.servico.descricao}</p>
+                <p className="text-cart">Preço: {formatCurrency(item.servico.valor)}</p>
+              </div>
+              <div className="d-flex align-items-center">
+                <button
+                  className="btn btn-light plus btn-sm"
+                  onClick={() => handleUpdateQuantity(item.id, item.quantidade + 1, item.servico.id)}
+                >
+                  <i className="bi bi-plus-circle"></i>
+                </button>
+                <span className="mx-3">{item.quantidade}</span>
+                <button
+                  className="btn btn-light plus btn-sm"
+                  onClick={() => handleUpdateQuantity(item.id, item.quantidade - 1, item.servico.id)}
+                >
+                  <i className="bi bi-dash-circle"></i>
+                </button>
+                <button
+                  className="btn btn-danger ml-3 btn-sm"
+                  onClick={() => handleRemoveItem(item.id, item.servico.id)}
+                >
+                  <i className="bi bi-trash"></i>
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div className="text-center">
+          <button className="btn btn-primary btn-lg" onClick={handleCheckout}>
+            Finalizar Compra
+          </button>
+        </div>
+      </div>
     </section>
   );  
 };

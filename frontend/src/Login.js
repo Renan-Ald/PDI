@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ScrollReveal from 'scrollreveal';
 import { loginUser } from './api'; 
-import login_1 from './img/Login_1.jpg';
 import './Login.css';
 
 const Login = () => {
@@ -8,11 +8,21 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    const sr = ScrollReveal();
+    sr.reveal('.login-card', {
+      origin: 'right',
+      distance: '50px',
+      duration: 1000,
+      reset: true,
+    });
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await loginUser(email, password);
-      window.location.href = '/'; // Redirecionar para a página de dashboard após login bem-sucedido
+      window.location.href = '/'; // Redirecionar para a página inicial após login bem-sucedido
     } catch (err) {
       setError('Erro ao fazer login. Verifique suas credenciais e tente novamente.');
     }
@@ -23,26 +33,10 @@ const Login = () => {
       <div className="container-fluid h-custom">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-md-9 col-lg-6 col-xl-5">
-            {/* <img 
-              src={login_1}
-              className="img-fluid" alt="Sample"
-            /> */}
+            {/* Você pode incluir uma imagem aqui, se necessário */}
           </div>
-          <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+          <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1 login-card">
             <form onSubmit={handleSubmit}>
-              <div className="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
-                {/* <p className="lead fw-normal mb-0 me-3">Sign in with</p>
-                <button type="button" className="btn btn-primary btn-floating mx-1">
-                  <i className="fab fa-facebook-f"></i>
-                </button>
-                <button type="button" className="btn btn-primary btn-floating mx-1">
-                  <i className="fab fa-twitter"></i>
-                </button>
-                <button type="button" className="btn btn-primary btn-floating mx-1">
-                  <i className="fab fa-linkedin-in"></i>
-                </button> */}
-              </div>
-
               <div className="divider d-flex align-items-center my-4">
                 <p className="text-center fw-bold mx-3 mb-0"></p>
               </div>
@@ -50,48 +44,47 @@ const Login = () => {
               {error && <p className="error-message">{error}</p>}
 
               <div className="form-group mb-4">
-              <label className="form-label" htmlFor="form3Example3">Email address</label>
+                <label className="form-label" htmlFor="form3Example3">Endereço de e-mail</label>
                 <input
                   type="email"
                   id="form3Example3"
                   className="form-control form-control-lg"
-                  placeholder="Enter a valid email address"
+                  placeholder="Insira um e-mail válido"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
-                
               </div>
 
               <div className="form-group mb-3">
-              <label className="form-label" htmlFor="form3Example4">Password</label>
+                <label className="form-label" htmlFor="form3Example4">Senha</label>
                 <input
                   type="password"
                   id="form3Example4"
                   className="form-control form-control-lg"
-                  placeholder="Enter password"
+                  placeholder="Insira sua senha"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                
               </div>
 
               <div className="d-flex justify-content-between align-items-center">
                 <div className="form-check mb-0">
                   <input className="form-check-input me-2" type="checkbox" value="" id="form2Example3" />
                   <label className="form-check-label text-body1" htmlFor="form2Example3">
-                    Remember me
+                    Lembrar de mim
                   </label>
                 </div>
-                <a href="/request-reset-password" className="text-body1  ">Forgot password?</a>
+                <a href="/request-reset-password" className="text-body1">Esqueceu a senha?</a>
               </div>
 
               <div className="text-center text-lg-start mt-4 pt-2">
                 <button type="submit" className="btn btn-primary btn-lg"
-                  style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem" }}>Login</button>
-                <p className="text-body1 small fw-bold mt-2 pt-1 mb-0 ">Don't have an account? <a href="#!"
-                    className="link-danger">Register</a></p>
+                  style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem" }}>Entrar</button>
+                <p className="text-body1 small fw-bold mt-2 pt-1 mb-0">
+                  Não tem uma conta? <a href="/register" className="link-danger">Cadastre-se</a>
+                </p>
               </div>
             </form>
           </div>
